@@ -1,0 +1,49 @@
+{
+	"alphabet": ["0", "1", "E"],
+
+	"states": ["Q1", "Q2", "STOP"],
+	
+	"begin-state": "Q1",
+	
+	"end-state": "STOP",
+	
+	"commands": 
+	{
+		"1Q1": 
+		{
+			"new-symbol": "1",
+			"new-state": "Q1",
+			"action": "R"
+		},
+		"0Q1": 
+		{
+			"new-symbol": "0",
+			"new-state": "Q1",
+			"action": "R"
+		},
+		"EQ1": 
+		{
+			"new-symbol": "E",
+			"new-state": "Q2",
+			"action": "L"
+		},
+		"1Q2": 
+		{
+			"new-symbol": "0",
+			"new-state": "Q2",
+			"action": "L"
+		},
+		"0Q2": 
+		{
+			"new-symbol": "1",
+			"new-state": "Q2",
+			"action": "L"
+		},
+		"EQ2": 
+		{
+			"new-symbol": "1",
+			"new-state": "STOP",
+			"action": "N"
+		}
+	}
+}
