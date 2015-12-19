@@ -8,7 +8,7 @@ class Tape : public QObject
 	Q_OBJECT
 
 public:
-	Tape(QObject *parent);
+	Tape();
 	~Tape();
 
 private:

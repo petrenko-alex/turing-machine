@@ -2,6 +2,8 @@
 #define MACHINE_H
 
 #include <QObject>
+#include "controller.h"
+#include "tape.h"
 
 class Machine : public QObject
 {
@@ -12,7 +14,8 @@ public:
 	~Machine();
 
 private:
-	
+	Tape* _tape;
+	Controller* _controller;
 };
 
 #endif // MACHINE_H
