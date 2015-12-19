@@ -4,10 +4,20 @@
 #include <QtWidgets/QMainWindow>
 #include <QFileDialog>
 #include <QDebug>
+#include <QIODevice>
+#include <QJsonDocument>
+#include <QJsonArray>
+#include <QJsonObject>
+#include <QMessageBox>
+#include <QDataStream>
+#include <tuple>
 #include "ui_turingmachine.h"
+#include "machine.h"
 
 #define DEFAULT_CONTROLLER_FILE "./controller.json"
 #define DEFAULT_TAPE_FILE		"./tape.json"
+
+// #TODO: Вынести функции парсинга файлов json в отдельный класс.
 
 class TuringMachine : public QMainWindow
 {
@@ -28,9 +38,11 @@ private slots:
 
 private:
 	void setConnections();
+	std::tuple<QStringList, unsigned int> parseTapeFile(const QString &data) const throw(QString&);
 
 
 	Ui::TuringMachineClass ui;
+	Machine* _machine;
 };
 
 #endif // TURINGMACHINE_H
