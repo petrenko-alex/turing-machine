@@ -2,17 +2,17 @@
 
 Machine::Machine()
 {
-	_tape = new Tape;
-	_controller = new Controller;
+	tape = new Tape;
+	controller = new Controller;
 }
 
 Machine::~Machine()
 {
-	delete _tape;
-	delete _controller;
+	delete tape;
+	delete controller;
 }
 
 void Machine::setTape(const QStringList &tapeView, unsigned int tapePointer)
 {
-	_tape->setData(tapeView, tapePointer);
+	tape->setData(tapeView, tapePointer);
 }

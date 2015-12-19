@@ -4,13 +4,13 @@ TuringMachine::TuringMachine(QWidget *parent)
 	: QMainWindow(parent)
 {
 	ui.setupUi(this);
-	_machine = new Machine;
+	machine = new Machine;
 	setConnections();
 }
 
 TuringMachine::~TuringMachine()
 {
-	delete _machine;
+	delete machine;
 }
 
 void TuringMachine::importTape()
@@ -33,7 +33,7 @@ void TuringMachine::importTape()
 			{
 				auto tuple = parseTapeFile(data);
 
-				_machine->setTape(	std::get<0>(tuple),
+				machine->setTape(	std::get<0>(tuple),
 									std::get<1>(tuple));
 			}
 			catch (QString& errorString)
@@ -53,6 +53,21 @@ void TuringMachine::exportTape()
 
 void TuringMachine::importController()
 {
+	/*QString fileName = QFileDialog::getOpenFileName( this,
+	"Выберите файл ленты",
+	"./",
+	"JSON файлы(*.json)");*/
+	QString fileName = DEFAULT_TAPE_FILE;
+
+	if (!fileName.isEmpty())
+	{
+		QFile file(fileName);
+		if (file.open(QIODevice::ReadOnly | QIODevice::Text))
+		{
+			QDataStream stream(&file);
+			QString data = file.readAll();
+		}
+	}
 
 }
 

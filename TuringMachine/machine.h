@@ -16,8 +16,8 @@ public:
 	void setTape(const QStringList &tapeView, unsigned int tapePointer);
 
 private:
-	Tape*		_tape;
-	Controller* _controller;
+	Tape*		tape;
+	Controller* controller;
 };
 
 #endif // MACHINE_H

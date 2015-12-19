@@ -42,7 +42,7 @@ private:
 
 
 	Ui::TuringMachineClass ui;
-	Machine* _machine;
+	Machine* machine;
 };
 
 #endif // TURINGMACHINE_H

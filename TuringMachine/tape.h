@@ -14,8 +14,8 @@ public:
 	void setData(const QStringList &tapeView,unsigned int tapePointer);
 
 private:
-	QStringList  _tapeView;
-	unsigned int _tapePointer;
+	QStringList  tapeView;
+	unsigned int tapePointer;
 };
 
 #endif // TAPE_H
