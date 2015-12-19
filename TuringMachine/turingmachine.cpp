@@ -102,7 +102,12 @@ void TuringMachine::machineStopWork()
 	// #TODO: Остановать работу машины.
 }
 
-void TuringMachine::setConnections()
+void TuringMachine::machineErrorReceived(QString &errorString)
+{
+	QMessageBox::critical(this, "Ошибка машины", errorString);
+}
+
+void TuringMachine::setConnections() const
 {
 	connect(ui.step, SIGNAL(clicked(bool)), SLOT(machineStep ()));
 	connect(ui.stop, SIGNAL(clicked(bool)), SLOT(machineStopWork()));
@@ -111,6 +116,7 @@ void TuringMachine::setConnections()
 	connect(ui.begin, SIGNAL(clicked(bool)), SLOT(machineBeginWork()));
 	connect(ui.exportController, SIGNAL(clicked(bool)), SLOT(exportController()));
 	connect(ui.importController, SIGNAL(clicked(bool)), SLOT(importController()));
+	connect(machine, SIGNAL(machineError(QString&)), this, SLOT(machineErrorReceived(QString&)));
 }
 
 void TuringMachine::parseControllerFile(const QString& data) throw(QString&)

@@ -35,9 +35,10 @@ private slots:
 	void machineStep();
 	void machineBeginWork();
 	void machineStopWork();
+	void machineErrorReceived(QString &errorString);
 
 private:
-	void setConnections();
+	void setConnections() const;
 	void parseControllerFile(const QString& data) throw(QString&);
 	void parseCommands(const QJsonObject commands) throw(QString&);
 	std::tuple<QStringList, unsigned int> parseTapeFile(const QString& data) const throw(QString&);

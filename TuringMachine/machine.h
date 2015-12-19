@@ -9,6 +9,10 @@ class Machine : public QObject
 {
 	Q_OBJECT
 
+
+signals:
+	void machineError(QString&);
+
 public:
 	Machine();
 	~Machine();
@@ -32,6 +36,8 @@ public:
 	void reset();
 
 private:
+	void verifyTape();
+
 	Tape*		tape;
 	Controller* controller;
 	bool tapeLoaded;

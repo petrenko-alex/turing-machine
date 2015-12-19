@@ -47,11 +47,21 @@ bool Machine::isReady() const
 void Machine::setTapeLoaded()
 {
 	tapeLoaded = true;
+
+	if (controllerLoaded)
+	{
+		verifyTape();
+	}
 }
 
 void Machine::setControllerLoaded()
 {
 	controllerLoaded = true;
+
+	if (tapeLoaded)
+	{
+		verifyTape();
+	}
 }
 
 void Machine::reset()
@@ -60,6 +70,27 @@ void Machine::reset()
 	controller->reset();
 	tapeLoaded = false;
 	controllerLoaded = false;
+}
+
+void Machine::verifyTape() 
+{
+	bool isOk = true;
+	QStringList tapeView = tape->getTapeView();
+
+	for (auto i : tapeView)
+	{
+		if (!controller->isAlphabetSymbolValid(i))
+		{
+			isOk = false;
+			break;
+		}
+	}
+
+	if (!isOk)
+	{
+		QString message = "Лента машины не соответствует алфавиту управляющего устройства.";
+		emit machineError(message);
+	}
 }
 
 QStringList Machine::getAlphabet() const

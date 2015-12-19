@@ -27,6 +27,7 @@ public:
 	void reset();
 
 private:
+	friend class Machine;
 	bool isStateValid(const QString& state) const;
 	bool isAlphabetSymbolValid(const QString& symbol) const;
 
