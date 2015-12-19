@@ -12,6 +12,7 @@ public:
 	~Tape();
 
 	void setData(const QStringList &tapeView,unsigned int tapePointer);
+	void reset();
 
 private:
 	QStringList  tapeView;

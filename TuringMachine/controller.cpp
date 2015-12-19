@@ -75,6 +75,15 @@ QStringList Controller::getStates(bool includeStopState) const
 	return tmpStates;
 }
 
+void Controller::reset()
+{
+	alphabet.clear();
+	states.clear();
+	beginState.clear();
+	endState.clear();
+	commands.clear();
+}
+
 QStringList Controller::getAlphabet() const
 {
 	return alphabet;

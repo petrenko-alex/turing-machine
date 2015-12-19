@@ -24,6 +24,8 @@ public:
 	QStringList getAlphabet() const;
 	QStringList getStates(bool includeStopState) const;
 
+	void reset();
+
 private:
 	bool isStateValid(const QString& state) const;
 	bool isAlphabetSymbolValid(const QString& symbol) const;

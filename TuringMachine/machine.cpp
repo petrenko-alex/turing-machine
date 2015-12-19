@@ -54,6 +54,14 @@ void Machine::setControllerLoaded()
 	controllerLoaded = true;
 }
 
+void Machine::reset()
+{
+	tape->reset();
+	controller->reset();
+	tapeLoaded = false;
+	controllerLoaded = false;
+}
+
 QStringList Machine::getAlphabet() const
 {
 	return controller->getAlphabet();

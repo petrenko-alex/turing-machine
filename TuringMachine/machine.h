@@ -29,6 +29,8 @@ public:
 	void setTapeLoaded();
 	void setControllerLoaded();
 
+	void reset();
+
 private:
 	Tape*		tape;
 	Controller* controller;
