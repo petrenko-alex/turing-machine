@@ -38,7 +38,9 @@ private slots:
 
 private:
 	void setConnections();
-	std::tuple<QStringList, unsigned int> parseTapeFile(const QString &data) const throw(QString&);
+	void parseControllerFile(const QString& data) throw(QString&);
+	void parseCommands(const QJsonObject commands) throw(QString&);
+	std::tuple<QStringList, unsigned int> parseTapeFile(const QString& data) const throw(QString&);
 
 
 	Ui::TuringMachineClass ui;
