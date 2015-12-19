@@ -10,11 +10,13 @@ class Machine : public QObject
 	Q_OBJECT
 
 public:
-	Machine(QObject *parent);
+	Machine();
 	~Machine();
 
+	void setTape(const QStringList &tapeView, unsigned int tapePointer);
+
 private:
-	Tape* _tape;
+	Tape*		_tape;
 	Controller* _controller;
 };
 
