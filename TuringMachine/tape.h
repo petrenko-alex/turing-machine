@@ -11,8 +11,11 @@ public:
 	Tape();
 	~Tape();
 
+	void setData(const QStringList &tapeView,unsigned int tapePointer);
+
 private:
-	
+	QStringList  _tapeView;
+	unsigned int _tapePointer;
 };
 
 #endif // TAPE_H
