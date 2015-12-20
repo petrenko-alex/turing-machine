@@ -11,9 +11,11 @@ public:
 	Tape();
 	~Tape();
 
-	QStringList getTapeView() const;
 	void setData(const QStringList &tapeView,unsigned int tapePointer);
 	void reset();
+
+	QStringList getTapeView() const;
+	unsigned int getTapePointer() const;
 
 private:
 	friend class Tape;

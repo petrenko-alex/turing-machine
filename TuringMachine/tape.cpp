@@ -15,6 +15,11 @@ QStringList Tape::getTapeView() const
 	return tapeView;
 }
 
+unsigned int Tape::getTapePointer() const
+{
+	return tapePointer;
+}
+
 void Tape::setData(const QStringList &tapeView, unsigned int tapePointer)
 {
 	this->tapeView	 = tapeView;
