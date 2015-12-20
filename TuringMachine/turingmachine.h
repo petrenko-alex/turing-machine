@@ -16,6 +16,7 @@
 
 #define DEFAULT_CONTROLLER_FILE "./controller.json"
 #define DEFAULT_TAPE_FILE		"./tape.json"
+#define DEFAULT_TAPE_COLUMNS	50
 
 // #TODO: Вынести функции парсинга файлов json в отдельный класс.
 
@@ -37,7 +38,14 @@ private slots:
 	void machineStopWork();
 	void machineErrorReceived(QString &errorString);
 
+	void expandTape(int currentRow, 
+					int currentColumn, 
+					int previousRow, 
+					int previousColumn);
+
 private:
+	void initializeTape();
+
 	void setConnections() const;
 	void parseControllerFile(const QString& data) throw(QString&);
 	void parseCommands(const QJsonObject commands) throw(QString&);

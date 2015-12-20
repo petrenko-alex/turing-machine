@@ -5,6 +5,7 @@ TuringMachine::TuringMachine(QWidget *parent)
 {
 	ui.setupUi(this);
 	machine = new Machine;
+	initializeTape();
 	setConnections();
 }
 
@@ -107,6 +108,37 @@ void TuringMachine::machineErrorReceived(QString &errorString)
 	QMessageBox::critical(this, "Ошибка машины", errorString);
 }
 
+void TuringMachine::expandTape(int currentRow,int currentColumn,int previousRow,int previousColumn)
+{
+	int columns = ui.tape->columnCount();
+
+	if (currentColumn == (columns - 1))
+	{
+		QTableWidgetItem* item = new QTableWidgetItem("-");
+		ui.tape->setItem(0, columns, item);
+		ui.tape->setColumnCount(columns + 1);
+	}
+	else if (currentColumn == 0)
+	{
+		QTableWidgetItem* item = new QTableWidgetItem("-");
+		ui.tape->insertColumn(0);
+		ui.tape->setItem(0, 0, item);
+		ui.tape->setColumnCount(columns + 1);
+	}
+}
+
+void TuringMachine::initializeTape()
+{
+	ui.tape->setRowCount(1);
+	ui.tape->setColumnCount(DEFAULT_TAPE_COLUMNS);
+
+	for (int i = 0; i < DEFAULT_TAPE_COLUMNS; ++i)
+	{
+		QTableWidgetItem* item = new QTableWidgetItem("-");
+		ui.tape->setItem(0, i, item);
+	}
+}
+
 void TuringMachine::setConnections() const
 {
 	connect(ui.step, SIGNAL(clicked(bool)), SLOT(machineStep ()));
@@ -116,6 +148,7 @@ void TuringMachine::setConnections() const
 	connect(ui.begin, SIGNAL(clicked(bool)), SLOT(machineBeginWork()));
 	connect(ui.exportController, SIGNAL(clicked(bool)), SLOT(exportController()));
 	connect(ui.importController, SIGNAL(clicked(bool)), SLOT(importController()));
+	connect(ui.tape, SIGNAL(currentCellChanged(int, int,int,int)), this, SLOT(expandTape(int, int,int,int)));
 	connect(machine, SIGNAL(machineError(QString&)), this, SLOT(machineErrorReceived(QString&)));
 }
 
