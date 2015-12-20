@@ -59,16 +59,30 @@
            <height>60</height>
           </size>
          </property>
+         <property name="font">
+          <font>
+           <family>Cooper Black</family>
+           <pointsize>13</pointsize>
+           <weight>50</weight>
+           <bold>false</bold>
+          </font>
+         </property>
+         <property name="textElideMode">
+          <enum>Qt::ElideMiddle</enum>
+         </property>
          <attribute name="horizontalHeaderVisible">
           <bool>false</bool>
          </attribute>
          <attribute name="horizontalHeaderCascadingSectionResizes">
-          <bool>false</bool>
+          <bool>true</bool>
          </attribute>
          <attribute name="horizontalHeaderDefaultSectionSize">
           <number>50</number>
          </attribute>
          <attribute name="verticalHeaderVisible">
+          <bool>false</bool>
+         </attribute>
+         <attribute name="verticalHeaderCascadingSectionResizes">
           <bool>false</bool>
          </attribute>
          <attribute name="verticalHeaderDefaultSectionSize">

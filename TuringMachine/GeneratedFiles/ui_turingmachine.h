@@ -91,10 +91,18 @@ public:
         tape->setObjectName(QStringLiteral("tape"));
         tape->setMinimumSize(QSize(0, 60));
         tape->setMaximumSize(QSize(16777215, 60));
+        QFont font;
+        font.setFamily(QStringLiteral("Cooper Black"));
+        font.setPointSize(13);
+        font.setBold(false);
+        font.setWeight(50);
+        tape->setFont(font);
+        tape->setTextElideMode(Qt::ElideMiddle);
         tape->horizontalHeader()->setVisible(false);
-        tape->horizontalHeader()->setCascadingSectionResizes(false);
+        tape->horizontalHeader()->setCascadingSectionResizes(true);
         tape->horizontalHeader()->setDefaultSectionSize(50);
         tape->verticalHeader()->setVisible(false);
+        tape->verticalHeader()->setCascadingSectionResizes(false);
         tape->verticalHeader()->setDefaultSectionSize(50);
 
         gridLayout_2->addWidget(tape, 0, 0, 1, 1);
@@ -106,9 +114,9 @@ public:
         step->setObjectName(QStringLiteral("step"));
         step->setMinimumSize(QSize(75, 23));
         step->setMaximumSize(QSize(75, 23));
-        QFont font;
-        font.setPointSize(9);
-        step->setFont(font);
+        QFont font1;
+        font1.setPointSize(9);
+        step->setFont(font1);
 
         horizontalLayout->addWidget(step);
 
@@ -116,7 +124,7 @@ public:
         begin->setObjectName(QStringLiteral("begin"));
         begin->setMinimumSize(QSize(75, 23));
         begin->setMaximumSize(QSize(75, 23));
-        begin->setFont(font);
+        begin->setFont(font1);
 
         horizontalLayout->addWidget(begin);
 
@@ -124,7 +132,7 @@ public:
         stop->setObjectName(QStringLiteral("stop"));
         stop->setMinimumSize(QSize(75, 23));
         stop->setMaximumSize(QSize(75, 23));
-        stop->setFont(font);
+        stop->setFont(font1);
 
         horizontalLayout->addWidget(stop);
 
@@ -136,7 +144,7 @@ public:
         exportTape->setObjectName(QStringLiteral("exportTape"));
         exportTape->setMinimumSize(QSize(75, 23));
         exportTape->setMaximumSize(QSize(75, 23));
-        exportTape->setFont(font);
+        exportTape->setFont(font1);
 
         horizontalLayout->addWidget(exportTape);
 
@@ -144,7 +152,7 @@ public:
         importTape->setObjectName(QStringLiteral("importTape"));
         importTape->setMinimumSize(QSize(75, 23));
         importTape->setMaximumSize(QSize(75, 23));
-        importTape->setFont(font);
+        importTape->setFont(font1);
 
         horizontalLayout->addWidget(importTape);
 
@@ -158,7 +166,7 @@ public:
         groupBox_2->setObjectName(QStringLiteral("groupBox_2"));
         groupBox_2->setMinimumSize(QSize(1141, 451));
         groupBox_2->setMaximumSize(QSize(1141, 451));
-        groupBox_2->setFont(font);
+        groupBox_2->setFont(font1);
         gridLayout = new QGridLayout(groupBox_2);
         gridLayout->setSpacing(6);
         gridLayout->setContentsMargins(11, 11, 11, 11);
@@ -182,17 +190,17 @@ public:
         horizontalLayout_3->setObjectName(QStringLiteral("horizontalLayout_3"));
         label_3 = new QLabel(frame_2);
         label_3->setObjectName(QStringLiteral("label_3"));
-        label_3->setFont(font);
+        label_3->setFont(font1);
 
         horizontalLayout_3->addWidget(label_3);
 
         nextCommand = new QLabel(frame_2);
         nextCommand->setObjectName(QStringLiteral("nextCommand"));
-        QFont font1;
-        font1.setPointSize(15);
-        font1.setBold(true);
-        font1.setWeight(75);
-        nextCommand->setFont(font1);
+        QFont font2;
+        font2.setPointSize(15);
+        font2.setBold(true);
+        font2.setWeight(75);
+        nextCommand->setFont(font2);
         nextCommand->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
 
         horizontalLayout_3->addWidget(nextCommand);
@@ -212,13 +220,13 @@ public:
         horizontalLayout_2->setObjectName(QStringLiteral("horizontalLayout_2"));
         label = new QLabel(frame);
         label->setObjectName(QStringLiteral("label"));
-        label->setFont(font);
+        label->setFont(font1);
 
         horizontalLayout_2->addWidget(label);
 
         currentState = new QLabel(frame);
         currentState->setObjectName(QStringLiteral("currentState"));
-        currentState->setFont(font1);
+        currentState->setFont(font2);
         currentState->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
 
         horizontalLayout_2->addWidget(currentState);
