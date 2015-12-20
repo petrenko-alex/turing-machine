@@ -37,8 +37,8 @@ public:
     QWidget *centralWidget;
     QVBoxLayout *verticalLayout;
     QGroupBox *groupBox;
+    QGridLayout *gridLayout_2;
     QTableWidget *tape;
-    QWidget *widget;
     QHBoxLayout *horizontalLayout;
     QPushButton *step;
     QPushButton *begin;
@@ -81,22 +81,28 @@ public:
         verticalLayout->setObjectName(QStringLiteral("verticalLayout"));
         groupBox = new QGroupBox(centralWidget);
         groupBox->setObjectName(QStringLiteral("groupBox"));
-        groupBox->setMinimumSize(QSize(1141, 121));
-        groupBox->setMaximumSize(QSize(1141, 121));
+        groupBox->setMinimumSize(QSize(1141, 131));
+        groupBox->setMaximumSize(QSize(1141, 131));
+        gridLayout_2 = new QGridLayout(groupBox);
+        gridLayout_2->setSpacing(6);
+        gridLayout_2->setContentsMargins(11, 11, 11, 11);
+        gridLayout_2->setObjectName(QStringLiteral("gridLayout_2"));
         tape = new QTableWidget(groupBox);
         tape->setObjectName(QStringLiteral("tape"));
-        tape->setGeometry(QRect(10, 23, 1121, 50));
-        tape->setMinimumSize(QSize(0, 50));
-        tape->setMaximumSize(QSize(16777215, 50));
-        widget = new QWidget(groupBox);
-        widget->setObjectName(QStringLiteral("widget"));
-        widget->setGeometry(QRect(10, 80, 1125, 25));
-        horizontalLayout = new QHBoxLayout(widget);
+        tape->setMinimumSize(QSize(0, 60));
+        tape->setMaximumSize(QSize(16777215, 60));
+        tape->horizontalHeader()->setVisible(false);
+        tape->horizontalHeader()->setCascadingSectionResizes(false);
+        tape->horizontalHeader()->setDefaultSectionSize(50);
+        tape->verticalHeader()->setVisible(false);
+        tape->verticalHeader()->setDefaultSectionSize(50);
+
+        gridLayout_2->addWidget(tape, 0, 0, 1, 1);
+
+        horizontalLayout = new QHBoxLayout();
         horizontalLayout->setSpacing(6);
-        horizontalLayout->setContentsMargins(11, 11, 11, 11);
         horizontalLayout->setObjectName(QStringLiteral("horizontalLayout"));
-        horizontalLayout->setContentsMargins(0, 0, 0, 0);
-        step = new QPushButton(widget);
+        step = new QPushButton(groupBox);
         step->setObjectName(QStringLiteral("step"));
         step->setMinimumSize(QSize(75, 23));
         step->setMaximumSize(QSize(75, 23));
@@ -106,7 +112,7 @@ public:
 
         horizontalLayout->addWidget(step);
 
-        begin = new QPushButton(widget);
+        begin = new QPushButton(groupBox);
         begin->setObjectName(QStringLiteral("begin"));
         begin->setMinimumSize(QSize(75, 23));
         begin->setMaximumSize(QSize(75, 23));
@@ -114,7 +120,7 @@ public:
 
         horizontalLayout->addWidget(begin);
 
-        stop = new QPushButton(widget);
+        stop = new QPushButton(groupBox);
         stop->setObjectName(QStringLiteral("stop"));
         stop->setMinimumSize(QSize(75, 23));
         stop->setMaximumSize(QSize(75, 23));
@@ -126,7 +132,7 @@ public:
 
         horizontalLayout->addItem(horizontalSpacer);
 
-        exportTape = new QPushButton(widget);
+        exportTape = new QPushButton(groupBox);
         exportTape->setObjectName(QStringLiteral("exportTape"));
         exportTape->setMinimumSize(QSize(75, 23));
         exportTape->setMaximumSize(QSize(75, 23));
@@ -134,13 +140,16 @@ public:
 
         horizontalLayout->addWidget(exportTape);
 
-        importTape = new QPushButton(widget);
+        importTape = new QPushButton(groupBox);
         importTape->setObjectName(QStringLiteral("importTape"));
         importTape->setMinimumSize(QSize(75, 23));
         importTape->setMaximumSize(QSize(75, 23));
         importTape->setFont(font);
 
         horizontalLayout->addWidget(importTape);
+
+
+        gridLayout_2->addLayout(horizontalLayout, 1, 0, 1, 1);
 
 
         verticalLayout->addWidget(groupBox);
