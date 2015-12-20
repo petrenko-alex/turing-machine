@@ -17,6 +17,7 @@
 #define DEFAULT_CONTROLLER_FILE "./controller.json"
 #define DEFAULT_TAPE_FILE		"./tape.json"
 #define DEFAULT_TAPE_COLUMNS	50
+#define TAPE_OFFSET				10
 
 // #TODO: Вынести функции парсинга файлов json в отдельный класс.
 
@@ -42,6 +43,7 @@ private slots:
 					int currentColumn, 
 					int previousRow, 
 					int previousColumn);
+	void showLoadedTape();
 
 private:
 	void initializeTape();

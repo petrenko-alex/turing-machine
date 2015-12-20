@@ -5,6 +5,7 @@ TuringMachine::TuringMachine(QWidget *parent)
 {
 	ui.setupUi(this);
 	machine = new Machine;
+	ui.tape->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
 	initializeTape();
 	setConnections();
 }
@@ -44,6 +45,7 @@ void TuringMachine::importTape()
 			}
 			file.close();
 			machine->setTapeLoaded();
+			showLoadedTape();
 		}
 	}
 }
@@ -115,15 +117,32 @@ void TuringMachine::expandTape(int currentRow,int currentColumn,int previousRow,
 	if (currentColumn == (columns - 1))
 	{
 		QTableWidgetItem* item = new QTableWidgetItem("-");
-		ui.tape->setItem(0, columns, item);
+		item->setTextAlignment(Qt::AlignCenter);
 		ui.tape->setColumnCount(columns + 1);
+		ui.tape->setItem(0, columns, item);
 	}
 	else if (currentColumn == 0)
 	{
 		QTableWidgetItem* item = new QTableWidgetItem("-");
+		item->setTextAlignment(Qt::AlignCenter);
 		ui.tape->insertColumn(0);
-		ui.tape->setItem(0, 0, item);
 		ui.tape->setColumnCount(columns + 1);
+		ui.tape->setItem(0, 0, item);
+	}
+}
+
+void TuringMachine::showLoadedTape()
+{
+	QStringList tape = machine->getTape ();
+	int size = tape.size();
+
+	if (machine->isTapeLoaded() && size != 0)
+	{
+		for (int i = 0; i < size; ++i)
+		{
+			ui.tape->item(0, (TAPE_OFFSET + i))->setText(tape[i]);
+		}
+		ui.tape->item(0, (TAPE_OFFSET + machine->getTapePointer()))->setBackgroundColor(Qt::green);
 	}
 }
 
@@ -135,6 +154,7 @@ void TuringMachine::initializeTape()
 	for (int i = 0; i < DEFAULT_TAPE_COLUMNS; ++i)
 	{
 		QTableWidgetItem* item = new QTableWidgetItem("-");
+		item->setTextAlignment(Qt::AlignCenter);
 		ui.tape->setItem(0, i, item);
 	}
 }
