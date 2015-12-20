@@ -175,6 +175,9 @@ public:
         controller->setObjectName(QStringLiteral("controller"));
         controller->setMinimumSize(QSize(581, 371));
         controller->setMaximumSize(QSize(581, 371));
+        controller->horizontalHeader()->setCascadingSectionResizes(false);
+        controller->horizontalHeader()->setStretchLastSection(true);
+        controller->verticalHeader()->setStretchLastSection(false);
 
         gridLayout->addWidget(controller, 0, 0, 3, 2);
 
@@ -293,9 +296,9 @@ public:
         importTape->setText(QApplication::translate("TuringMachineClass", "\320\230\320\274\320\277\320\276\321\200\321\202", 0));
         groupBox_2->setTitle(QApplication::translate("TuringMachineClass", "\320\243\321\201\321\202\321\200\320\276\320\271\321\201\321\202\320\262\320\276 \321\203\320\277\321\200\320\260\320\262\320\273\320\265\320\275\320\270\321\217", 0));
         label_3->setText(QApplication::translate("TuringMachineClass", "\320\241\320\273\320\265\320\264\321\203\321\216\321\211\320\260\321\217 \320\272\320\276\320\274\320\260\320\275\320\264\320\260:", 0));
-        nextCommand->setText(QApplication::translate("TuringMachineClass", "Q1", 0));
+        nextCommand->setText(QApplication::translate("TuringMachineClass", "-", 0));
         label->setText(QApplication::translate("TuringMachineClass", "\320\242\320\265\320\272\321\203\321\211\320\265\320\265 \321\201\320\276\321\201\321\202\320\276\321\217\320\275\320\270\320\265:", 0));
-        currentState->setText(QApplication::translate("TuringMachineClass", "Q1", 0));
+        currentState->setText(QApplication::translate("TuringMachineClass", "-", 0));
         exportController->setText(QApplication::translate("TuringMachineClass", "\320\255\320\272\321\201\320\277\320\276\321\200\321\202", 0));
         importController->setText(QApplication::translate("TuringMachineClass", "\320\230\320\274\320\277\320\276\321\200\321\202", 0));
     } // retranslateUi
