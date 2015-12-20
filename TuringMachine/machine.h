@@ -53,7 +53,7 @@ public:
 	void reset();
 
 	/* Работа машины */
-	void oneStep();
+	void oneStep(bool emitSignals);
 	void startWork();
 	void stopWork();
 

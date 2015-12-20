@@ -10,6 +10,7 @@
 #include <QJsonObject>
 #include <QMessageBox>
 #include <QDataStream>
+#include <QtConcurrent/QtConcurrentRun>
 #include <tuple>
 #include "ui_turingmachine.h"
 #include "machine.h"

@@ -131,7 +131,7 @@ void Machine::reset()
 	controllerLoaded = false;
 }
 
-void Machine::oneStep()
+void Machine::oneStep(bool emitSignals)
 {
 	QString currentState = getCurrentState();
 	QString currentSymbol = getCurrentTapeSymbol();
@@ -144,7 +144,10 @@ void Machine::oneStep()
 
 	/* Устанавливаем ноый символ в старую позицию ленты */
 	tape->setSymbolAt(newSymbol,oldTapePointer);
-	emit tapeSymbolChanged(oldTapePointer, newSymbol);
+	if (emitSignals)
+	{
+		emit tapeSymbolChanged(oldTapePointer, newSymbol);
+	}
 
 	/* Перемещаем головку ленты на новую позицию */
 	int newTapePointer = getNewTapePointer(action, oldTapePointer);
@@ -159,7 +162,7 @@ void Machine::oneStep()
 		return;
 	}
 
-	if (action != "N")
+	if (action != "N" && emitSignals)
 	{
 		emit tapePointerChanged(oldTapePointer, newTapePointer);
 	}
@@ -180,7 +183,7 @@ void Machine::startWork()
 {
 	while (machineState != MachineState::FINISHED)
 	{
-		oneStep();
+		oneStep(false);
 	}
 }
 

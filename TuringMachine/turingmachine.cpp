@@ -100,7 +100,7 @@ void TuringMachine::machineStep()
 {
 	if (machine->isReady())
 	{
-		machine->oneStep();
+		machine->oneStep(true);
 		showCurrentState();
 		showNextCommand();
 	}
@@ -114,7 +114,8 @@ void TuringMachine::machineBeginWork()
 {
 	if (machine->isReady())
 	{
-		machine->startWork();
+		qDebug() << "Начата работа машины";
+		QtConcurrent::run(this->machine,&Machine::startWork);
 	}
 	else
 	{
