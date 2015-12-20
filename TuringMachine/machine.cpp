@@ -39,9 +39,29 @@ QStringList Machine::getStates(bool includeStopState) const
 	return controller->getStates(includeStopState);
 }
 
+QStringList Machine::getTape() const
+{
+	return tape->getTapeView();
+}
+
+unsigned int Machine::getTapePointer() const
+{
+	return tape->getTapePointer();
+}
+
 bool Machine::isReady() const
 {
 	return tapeLoaded && controllerLoaded;
+}
+
+bool Machine::isTapeLoaded() const
+{
+	return tapeLoaded;
+}
+
+bool Machine::isControllerLoaded() const
+{
+	return controllerLoaded;
 }
 
 void Machine::setTapeLoaded()

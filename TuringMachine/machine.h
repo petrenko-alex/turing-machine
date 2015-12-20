@@ -27,9 +27,13 @@ public:
 
 	QStringList getAlphabet() const;
 	QStringList getStates(bool includeStopState) const;
+	QStringList getTape() const;
+	unsigned int getTapePointer() const;
 
 
 	bool isReady() const;
+	bool isTapeLoaded() const;
+	bool isControllerLoaded() const;
 	void setTapeLoaded();
 	void setControllerLoaded();
 
