@@ -14,8 +14,9 @@ public:
 	void setData(const QStringList &tapeView,unsigned int tapePointer);
 	void reset();
 
-	QStringList getTapeView() const;
+	QStringList  getTapeView() const;
 	unsigned int getTapePointer() const;
+	QString		 getCurrentSymbol() const;
 
 private:
 	friend class Tape;

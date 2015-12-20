@@ -20,6 +20,11 @@ unsigned int Tape::getTapePointer() const
 	return tapePointer;
 }
 
+QString Tape::getCurrentSymbol() const
+{
+	return tapeView.at(tapePointer);
+}
+
 void Tape::setData(const QStringList &tapeView, unsigned int tapePointer)
 {
 	this->tapeView	 = tapeView;
