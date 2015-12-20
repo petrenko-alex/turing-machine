@@ -18,6 +18,7 @@
 #define DEFAULT_TAPE_FILE		"./tape.json"
 #define DEFAULT_TAPE_COLUMNS	50
 #define TAPE_OFFSET				10
+#define TAPE_BLANK				"-"
 
 // #TODO: Вынести функции парсинга файлов json в отдельный класс.
 
@@ -38,6 +39,9 @@ private slots:
 	void machineBeginWork();
 	void machineStopWork();
 	void machineErrorReceived(QString &errorString);
+	void machineFinished();
+	void machineTapeSymbolChanged(unsigned int index, QString newSymbol);
+	void machineTapePointerChanged(unsigned int oldTapePointer, unsigned int newTapePointer);
 
 	void expandTape(int currentRow, 
 					int currentColumn, 
@@ -50,15 +54,16 @@ private slots:
 
 private:
 	void initializeTape();
-
+	void paintRow(int rowNumber, const QColor& color);
 	void setConnections() const;
 	void parseControllerFile(const QString& data) throw(QString&);
 	void parseCommands(const QJsonObject commands) throw(QString&);
-	std::tuple<QStringList, unsigned int> parseTapeFile(const QString& data) const throw(QString&);
+	std::tuple<QStringList, unsigned int, QString> parseTapeFile(const QString& data) const throw(QString&);
 
 
 	Ui::TuringMachineClass ui;
 	Machine* machine;
+	int tapeOffet;
 };
 
 #endif // TURINGMACHINE_H

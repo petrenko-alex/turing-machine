@@ -14,9 +14,9 @@ Machine::~Machine()
 	delete controller;
 }
 
-void Machine::setTape(const QStringList& tapeView, unsigned int tapePointer)
+void Machine::setTape(const QStringList& tapeView, unsigned int tapePointer, const QString& emptySymbol)
 {
-	tape->setData(tapeView, tapePointer);
+	tape->setData(tapeView, tapePointer,emptySymbol);
 }
 
 void Machine::setCurrentState(const QString& state)
@@ -47,6 +47,11 @@ QStringList Machine::getStates(bool includeStopState) const
 QStringList Machine::getTape() const
 {
 	return tape->getTapeView();
+}
+
+QString Machine::getEmptySymbol() const
+{
+	return tape->getEmptySymbol();
 }
 
 unsigned int Machine::getTapePointer() const
@@ -120,10 +125,55 @@ void Machine::reset()
 	controllerLoaded = false;
 }
 
-void Machine::verifyTape() 
+void Machine::oneStep()
+{
+	QString currentState = getCurrentState();
+	QString currentSymbol = getCurrentTapeSymbol();
+	QString command = getCommand(currentSymbol + currentState);
+	QStringList splittedCommand = command.split('-');
+	QString newSymbol = splittedCommand.at(0);
+	QString newState = splittedCommand.at(1);
+	QString action = splittedCommand.at(2);
+	unsigned int oldTapePointer = tape->getTapePointer();
+
+	/* Устанавливаем ноый символ в старую позицию ленты */
+	tape->setSymbolAt(newSymbol,oldTapePointer);
+	emit tapeSymbolChanged(oldTapePointer, newSymbol);
+
+	/* Перемещаем головку ленты на новую позицию */
+	int newTapePointer = getNewTapePointer(action, oldTapePointer);
+	try
+	{
+		tape->setCurrentTapePointer(newTapePointer);
+		newTapePointer = tape->getTapePointer();
+	}
+	catch (QString& errorString)
+	{
+		emit machineError(errorString);
+		return;
+	}
+
+	if (action != "N")
+	{
+		emit tapePointerChanged(oldTapePointer, newTapePointer);
+	}
+
+	/* Устанавливаем новое состояние УУ */
+	setCurrentState(newState);
+
+	/* Проверка конечного состояния */
+	// #TODO: Не обращаться к полям напрямую
+	if (controller->currentState == controller->endState)
+	{
+		emit machineFinished();
+	}
+}
+
+void Machine::verifyTape()
 {
 	bool isOk = true;
 	QStringList tapeView = tape->getTapeView();
+	QString emptySymbol = tape->getEmptySymbol();
 
 	for (auto i : tapeView)
 	{
@@ -134,10 +184,36 @@ void Machine::verifyTape()
 		}
 	}
 
+	if (!controller->isAlphabetSymbolValid(emptySymbol))
+	{
+		isOk = false;
+	}
+
 	if (!isOk)
 	{
 		QString message = "Лента машины не соответствует алфавиту управляющего устройства.";
 		emit machineError(message);
+	}
+}
+
+unsigned int Machine::getNewTapePointer(const QString& action, unsigned int prevPointer)
+{
+	if (action == "R")
+	{
+		return (prevPointer + 1);
+	}
+	else if (action == "L")
+	{
+		return (prevPointer - 1);
+	}
+	else if (action == "N")
+	{
+		return prevPointer;
+	}
+	else
+	{
+		QString errorString = "Найдена неизвестная команда \"" + action + "\".";
+		emit machineError(errorString);
 	}
 }
 

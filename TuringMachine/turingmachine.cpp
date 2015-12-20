@@ -4,11 +4,12 @@ TuringMachine::TuringMachine(QWidget *parent)
 	: QMainWindow(parent)
 {
 	ui.setupUi(this);
+	tapeOffet = TAPE_OFFSET;
 	machine = new Machine;
 	ui.tape->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
 	ui.controller->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-	initializeTape();
 	setConnections();
+	initializeTape();
 }
 
 TuringMachine::~TuringMachine()
@@ -37,11 +38,13 @@ void TuringMachine::importTape()
 				auto tuple = parseTapeFile(data);
 
 				machine->setTape(	std::get<0>(tuple),
-									std::get<1>(tuple));
+									std::get<1>(tuple),
+									std::get<2>(tuple));
 			}
 			catch (QString& errorString)
 			{
 				QMessageBox::critical(this, "Ошибка разбора файла \"" + fileName + "\"", errorString);
+				file.close();
 				return;
 			}
 			file.close();
@@ -78,6 +81,7 @@ void TuringMachine::importController()
 			catch (QString& errorString)
 			{
 				QMessageBox::critical(this, "Ошибка разбора файла \"" + fileName + "\"", errorString);
+				file.close();
 				return;
 			}
 			file.close();
@@ -94,7 +98,16 @@ void TuringMachine::exportController()
 
 void TuringMachine::machineStep()
 {
-	// #TODO: Один шаг машины.
+	if (machine->isReady())
+	{
+		machine->oneStep();
+		showCurrentState();
+		showNextCommand();
+	}
+	else
+	{
+		QMessageBox::warning(this, "Машина", "Машина еще не готова к работе.\nПожалуйста, убедитесь, что лента и управляющее устройство заданы.");
+	}
 }
 
 void TuringMachine::machineBeginWork()
@@ -112,11 +125,51 @@ void TuringMachine::machineErrorReceived(QString &errorString)
 	QMessageBox::critical(this, "Ошибка машины", errorString);
 }
 
-void TuringMachine::expandTape(int currentRow,int currentColumn,int previousRow,int previousColumn)
+void TuringMachine::machineFinished()
+{
+	// #TODO: Что сделать еще?
+	ui.nextCommand->setText("Машина завершила работу");
+	QMessageBox::information(this, "Состояние машины", "Машина достигла конечного состояния");
+}
+
+void TuringMachine::machineTapeSymbolChanged(unsigned int index, QString newSymbol)
+{
+	ui.tape->item(0, tapeOffet + index)->setText(newSymbol);
+}
+
+void TuringMachine::machineTapePointerChanged(unsigned int oldTapePointer, unsigned int newTapePointer)
+{
+	unsigned int oldPointer = tapeOffet + oldTapePointer;
+	unsigned int newPointer = 0;
+
+	/* Удаляем старый указатель */
+	ui.tape->item(0, oldPointer)->setBackgroundColor(Qt::white); 
+
+	if (oldTapePointer == 0 && newTapePointer == 0)
+	/* В ленту добавился крайнией символ слева */
+	{
+		if (--tapeOffet < 0)
+		{
+			tapeOffet == 0;
+		}
+	}
+	newPointer = tapeOffet + newTapePointer;
+	QTableWidgetItem* tmp = ui.tape->item(0, newPointer);
+	tmp->setBackgroundColor(Qt::green);
+
+	/* Ставим пустой символ машины, если в текущей ячейке ленты пусто */
+	if (tmp->text() == TAPE_BLANK)
+	{
+		tmp->setText(machine->getEmptySymbol());
+	}
+}
+
+void TuringMachine::expandTape(int currentRow, int currentColumn, int previousRow, int previousColumn)
 {
 	int columns = ui.tape->columnCount();
 
 	if (currentColumn == (columns - 1))
+	/* Добавляем ячейку справа */
 	{
 		QTableWidgetItem* item = new QTableWidgetItem("-");
 		item->setTextAlignment(Qt::AlignCenter);
@@ -124,12 +177,14 @@ void TuringMachine::expandTape(int currentRow,int currentColumn,int previousRow,
 		ui.tape->setItem(0, columns, item);
 	}
 	else if (currentColumn == 0)
+	/* Добавляем ячейку слева */
 	{
 		QTableWidgetItem* item = new QTableWidgetItem("-");
 		item->setTextAlignment(Qt::AlignCenter);
 		ui.tape->insertColumn(0);
 		ui.tape->setColumnCount(columns + 1);
 		ui.tape->setItem(0, 0, item);
+		++tapeOffet;
 	}
 }
 
@@ -142,9 +197,9 @@ void TuringMachine::showLoadedTape()
 	{
 		for (int i = 0; i < size; ++i)
 		{
-			ui.tape->item(0, (TAPE_OFFSET + i))->setText(tape[i]);
+			ui.tape->item(0, (tapeOffet + i))->setText(tape[i]);
 		}
-		ui.tape->item(0, (TAPE_OFFSET + machine->getTapePointer()))->setBackgroundColor(Qt::green);
+		ui.tape->item(0, (tapeOffet + machine->getTapePointer()))->setBackgroundColor(Qt::green);
 
 		if (machine->isControllerLoaded())
 		{
@@ -202,16 +257,13 @@ void TuringMachine::showCurrentState()
 
 	for (int i = 0; i < rows; ++i)
 	{
+		paintRow(i, Qt::white);
 		QString state = ui.controller->verticalHeaderItem(i)->text ();
 
 		if (state == currentState)
 		{
 			ui.controller->verticalHeaderItem(i)->setForeground(QColor("green"));
-			int columns = ui.controller->columnCount();
-			for (int j = 0; j < columns; ++j)
-			{
-				ui.controller->item(i, j)->setBackgroundColor(Qt::green);
-			}
+			paintRow(i, Qt::green);
 		}
 	}
 	ui.currentState->setText(currentState);
@@ -241,6 +293,19 @@ void TuringMachine::initializeTape()
 	}
 }
 
+void TuringMachine::paintRow(int rowNumber, const QColor& color)
+{
+	int columns = ui.controller->columnCount();
+	for (int j = 0; j < columns; ++j)
+	{
+		QTableWidgetItem* tmp = ui.controller->item(rowNumber, j);
+		if (tmp != nullptr)
+		{
+			tmp->setBackgroundColor(color);
+		}
+	}
+}
+
 void TuringMachine::setConnections() const
 {
 	connect(ui.step, SIGNAL(clicked(bool)), SLOT(machineStep ()));
@@ -252,6 +317,9 @@ void TuringMachine::setConnections() const
 	connect(ui.importController, SIGNAL(clicked(bool)), SLOT(importController()));
 	connect(ui.tape, SIGNAL(currentCellChanged(int, int,int,int)), this, SLOT(expandTape(int, int,int,int)));
 	connect(machine, SIGNAL(machineError(QString&)), this, SLOT(machineErrorReceived(QString&)));
+	connect(machine, SIGNAL(machineFinished()), this, SLOT(machineFinished()));
+	connect(machine, SIGNAL(tapeSymbolChanged(unsigned int, QString)), this, SLOT(machineTapeSymbolChanged(unsigned int,QString)));
+	connect(machine, SIGNAL(tapePointerChanged(unsigned int, unsigned int)), this, SLOT(machineTapePointerChanged(unsigned int, unsigned int)));
 }
 
 void TuringMachine::parseControllerFile(const QString& data) throw(QString&)
@@ -381,8 +449,9 @@ void TuringMachine::parseCommands(const QJsonObject commands) throw(QString&)
 	}
 }
 
-std::tuple<QStringList, unsigned int> TuringMachine::parseTapeFile(const QString& data) const throw(QString&)
+std::tuple<QStringList, unsigned int,QString> TuringMachine::parseTapeFile(const QString& data) const throw(QString&)
 {
+	QString string;
 	QStringList list;
 	unsigned int number;
 
@@ -408,6 +477,12 @@ std::tuple<QStringList, unsigned int> TuringMachine::parseTapeFile(const QString
 	if (obj.contains("pointer-index"))
 	{
 		number = obj["pointer-index"].toInt();
+
+		if (number < 0 || number >= list.size())
+		{
+			QString errorString = "Указатель ленты по тегу \"pointer-index\" задан не верно.";
+			throw errorString;
+		}
 	}
 	else
 	{
@@ -415,5 +490,15 @@ std::tuple<QStringList, unsigned int> TuringMachine::parseTapeFile(const QString
 		throw errorString;
 	}
 
-	return std::make_tuple(list, number);
+	if (obj.contains("empty-symbol"))
+	{
+		string = obj["empty-symbol"].toString();
+	}
+	else
+	{
+		QString errorString = "Не найдены данные о пустом символе ленты по тегу \"empty-symbol\".";
+		throw errorString;
+	}
+
+	return std::make_tuple(list, number,string);
 }
