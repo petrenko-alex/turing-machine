@@ -5,6 +5,7 @@
 #include "controller.h"
 #include "tape.h"
 
+
 class Machine : public QObject
 {
 	Q_OBJECT
@@ -44,6 +45,7 @@ public:
 	bool isReady() const;
 	bool isTapeLoaded() const;
 	bool isControllerLoaded() const;
+	bool isFinished() const;
 	void setTapeLoaded();
 	void setControllerLoaded();
 
@@ -52,6 +54,7 @@ public:
 
 	/* Работа машины */
 	void oneStep();
+	void startWork();
 
 private:
 	/* Проверить, соответствует ли лента УУ */
@@ -62,6 +65,13 @@ private:
 	Controller* controller;
 	bool tapeLoaded;
 	bool controllerLoaded;
+
+	enum class MachineState
+	{
+		IN_WORK,
+		PAUSED,
+		FINISHED,
+	}machineState;
 };
 
 #endif // MACHINE_H

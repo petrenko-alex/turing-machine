@@ -150,7 +150,7 @@ void TuringMachine::machineTapePointerChanged(unsigned int oldTapePointer, unsig
 	{
 		if (--tapeOffet < 0)
 		{
-			tapeOffet == 0;
+			tapeOffet = 0;
 		}
 	}
 	newPointer = tapeOffet + newTapePointer;
@@ -271,13 +271,16 @@ void TuringMachine::showCurrentState()
 
 void TuringMachine::showNextCommand()
 {
-	QString currentState = machine->getCurrentState();
-	QString currentSymbol = machine->getCurrentTapeSymbol();
-	QString key = currentSymbol + currentState;
-	QString cmd = machine->getCommand(key);
-	QString text = currentSymbol + "-" + currentState + "->" + cmd;
+	if (!machine->isFinished ())
+	{
+		QString currentState = machine->getCurrentState();
+		QString currentSymbol = machine->getCurrentTapeSymbol();
+		QString key = currentSymbol + currentState;
+		QString cmd = machine->getCommand(key);
+		QString text = currentSymbol + "-" + currentState + "->" + cmd;
 
-	ui.nextCommand->setText(text);
+		ui.nextCommand->setText(text);
+	}
 }
 
 void TuringMachine::initializeTape()

@@ -6,6 +6,7 @@ Machine::Machine()
 	controller = new Controller;
 	tapeLoaded = false;
 	controllerLoaded = false;
+	machineState = MachineState::PAUSED;
 }
 
 Machine::~Machine()
@@ -97,6 +98,11 @@ bool Machine::isControllerLoaded() const
 	return controllerLoaded;
 }
 
+bool Machine::isFinished() const
+{
+	return machineState == MachineState::FINISHED;
+}
+
 void Machine::setTapeLoaded()
 {
 	tapeLoaded = true;
@@ -165,8 +171,14 @@ void Machine::oneStep()
 	// #TODO: Не обращаться к полям напрямую
 	if (controller->currentState == controller->endState)
 	{
+		machineState = MachineState::FINISHED;
 		emit machineFinished();
 	}
+}
+
+void Machine::startWork()
+{
+
 }
 
 void Machine::verifyTape()
