@@ -6,6 +6,7 @@ TuringMachine::TuringMachine(QWidget *parent)
 	ui.setupUi(this);
 	machine = new Machine;
 	ui.tape->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+	ui.controller->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 	initializeTape();
 	setConnections();
 }
@@ -81,6 +82,7 @@ void TuringMachine::importController()
 			}
 			file.close();
 			machine->setControllerLoaded();
+			showLoadedController();
 		}
 	}
 }
@@ -144,6 +146,79 @@ void TuringMachine::showLoadedTape()
 		}
 		ui.tape->item(0, (TAPE_OFFSET + machine->getTapePointer()))->setBackgroundColor(Qt::green);
 	}
+}
+
+void TuringMachine::showLoadedController()
+{
+	QStringList alphabet = machine->getAlphabet();
+	QStringList states = machine->getStates(false);
+	int columns = alphabet.size();
+	int rows = states.size();
+
+	if (machine->isControllerLoaded() && columns != 0 && rows != 0)
+	{
+		ui.controller->setColumnCount(columns);
+		ui.controller->setRowCount(rows);
+
+		ui.controller->setHorizontalHeaderLabels(alphabet);
+		ui.controller->setVerticalHeaderLabels(states);	
+
+		for (int i = 0; i < rows; ++i)
+		{
+			QString currentState = ui.controller->verticalHeaderItem(i)->text();
+
+			for (int j = 0; j < columns; ++j)
+			{
+				QString currentLetter = ui.controller->horizontalHeaderItem(j)->text();
+				QString key = currentLetter + currentState;
+				QString command = machine->getCommand(key);
+
+				if (!command.isEmpty())
+				{
+ 					QTableWidgetItem* item = new QTableWidgetItem(command);
+ 					ui.controller->setItem(i, j,item);
+				}
+			}
+			showCurrentState();
+			if (machine->isTapeLoaded())
+			{
+				showNextCommand();
+			}
+		}
+	}
+}
+
+void TuringMachine::showCurrentState()
+{
+	int rows = ui.controller->rowCount();
+	QString currentState = machine->getCurrentState();
+
+	for (int i = 0; i < rows; ++i)
+	{
+		QString state = ui.controller->verticalHeaderItem(i)->text ();
+
+		if (state == currentState)
+		{
+			ui.controller->verticalHeaderItem(i)->setForeground(QColor("green"));
+			int columns = ui.controller->columnCount();
+			for (int j = 0; j < columns; ++j)
+			{
+				ui.controller->item(i, j)->setBackgroundColor(Qt::green);
+			}
+		}
+	}
+	ui.currentState->setText(currentState);
+}
+
+void TuringMachine::showNextCommand()
+{
+	QString currentState = machine->getCurrentState();
+	QString currentSymbol = machine->getCurrentTapeSymbol();
+	QString key = currentSymbol + currentState;
+	QString cmd = machine->getCommand(key);
+	QString text = currentSymbol + "-" + currentState + "->" + cmd;
+
+	ui.nextCommand->setText(text);
 }
 
 void TuringMachine::initializeTape()

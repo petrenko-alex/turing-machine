@@ -44,6 +44,9 @@ private slots:
 					int previousRow, 
 					int previousColumn);
 	void showLoadedTape();
+	void showLoadedController();
+	void showCurrentState();
+	void showNextCommand();
 
 private:
 	void initializeTape();
