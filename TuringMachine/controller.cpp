@@ -10,6 +10,21 @@ Controller::~Controller()
 
 }
 
+bool Controller::setCurrentState(const QString& state)
+{
+	if (isStateValid(state))
+	{
+		this->currentState = state;
+		return true;
+	}
+	return false;
+}
+
+QString Controller::getCurrentState() const
+{
+	return currentState;
+}
+
 void Controller::setStates(const QStringList& states)
 {
 	this->states = states;
@@ -27,6 +42,7 @@ void Controller::setBeginEndStates(const QString& beginState, const QString& end
 	if (isStateValid(beginState))
 	{
 		this->beginState = beginState;
+		this->currentState = beginState;
 	}
 	else
 	{

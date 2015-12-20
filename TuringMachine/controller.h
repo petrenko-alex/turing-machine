@@ -14,6 +14,7 @@ public:
 	Controller();
 	~Controller();
 
+	bool setCurrentState(const QString& state);
 	void setStates(const QStringList& states);
 	void setAlphabet(const QStringList& alphabet);
 	void setBeginEndStates(const QString& beginState,
@@ -23,6 +24,7 @@ public:
 
 	QStringList getAlphabet() const;
 	QStringList getStates(bool includeStopState) const;
+	QString		getCurrentState() const;
 
 	void reset();
 
@@ -33,6 +35,7 @@ private:
 
 	QString endState;
 	QString beginState;
+	QString currentState;
 	QStringList states;
 	QStringList alphabet;
 	QMap<QString, Command> commands;
@@ -44,11 +47,26 @@ struct Command
 	QString newState;
 	QString action;
 
+	Command()
+	{
+		this->newSymbol = "";
+		this->newState = "";
+		this->action = "";
+	}
+
 	Command(const QString& newSymbol, const QString& newState, const QString& action)
 	{
 		this->newSymbol = newSymbol;
 		this->newState = newState;
 		this->action = action;
+	}
+
+	Command& operator=(const Command& other)
+	{
+		this->newSymbol = other.newSymbol;
+		this->newState = other.newState;
+		this->action = other.action;
+		return *this;
 	}
 };
 

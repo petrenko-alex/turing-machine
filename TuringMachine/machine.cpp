@@ -19,6 +19,11 @@ void Machine::setTape(const QStringList& tapeView, unsigned int tapePointer)
 	tape->setData(tapeView, tapePointer);
 }
 
+void Machine::setCurrentState(const QString& state)
+{
+	controller->setCurrentState(state);
+}
+
 void Machine::setAlphabet(const QStringList& alphabet)
 {
 	controller->setAlphabet(alphabet);
@@ -47,6 +52,29 @@ QStringList Machine::getTape() const
 unsigned int Machine::getTapePointer() const
 {
 	return tape->getTapePointer();
+}
+
+QString Machine::getCommand(const QString& key) const
+{
+	// #TODO: не обращаться напрямую к полю
+	QString command = "";
+
+	if (controller->commands.contains(key))
+	{
+		Command cmd = controller->commands.value(key);
+		command = cmd.newSymbol + "-" + cmd.newState + "-" + cmd.action;
+	}
+	return command;
+}
+
+QString Machine::getCurrentState() const
+{
+	return controller->getCurrentState();
+}
+
+QString Machine::getCurrentTapeSymbol() const
+{
+	return tape->getCurrentSymbol();
 }
 
 bool Machine::isReady() const

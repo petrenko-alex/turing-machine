@@ -19,6 +19,7 @@ public:
 
 	void setTape(const QStringList& tapeView, unsigned int tapePointer);
 
+	void setCurrentState(const QString& state);
 	void setStates(const QStringList& states);
 	void setAlphabet(const QStringList& alphabet);
 	void setBeginEndStates(	const QString& beginState,
@@ -29,6 +30,9 @@ public:
 	QStringList getStates(bool includeStopState) const;
 	QStringList getTape() const;
 	unsigned int getTapePointer() const;
+	QString getCommand(const QString& key) const;
+	QString getCurrentState() const;
+	QString getCurrentTapeSymbol() const;
 
 
 	bool isReady() const;
