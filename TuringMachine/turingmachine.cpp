@@ -112,12 +112,20 @@ void TuringMachine::machineStep()
 
 void TuringMachine::machineBeginWork()
 {
-	// #TODO: Начать работу машины.
+	if (machine->isReady())
+	{
+		machine->startWork();
+	}
+	else
+	{
+		QMessageBox::warning(this, "Машина", "Машина еще не готова к работе.\nПожалуйста, убедитесь, что лента и управляющее устройство заданы.");
+	}
 }
 
 void TuringMachine::machineStopWork()
 {
-	// #TODO: Остановать работу машины.
+	qDebug() << "Нажата кнопка останова машины";
+	machine->stopWork();
 }
 
 void TuringMachine::machineErrorReceived(QString &errorString)

@@ -178,7 +178,15 @@ void Machine::oneStep()
 
 void Machine::startWork()
 {
+	while (machineState != MachineState::FINISHED)
+	{
+		oneStep();
+	}
+}
 
+void Machine::stopWork()
+{
+	machineState = MachineState::FINISHED;
 }
 
 void Machine::verifyTape()

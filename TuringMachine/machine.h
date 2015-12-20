@@ -55,6 +55,7 @@ public:
 	/* Работа машины */
 	void oneStep();
 	void startWork();
+	void stopWork();
 
 private:
 	/* Проверить, соответствует ли лента УУ */
