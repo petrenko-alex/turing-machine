@@ -145,6 +145,11 @@ void TuringMachine::showLoadedTape()
 			ui.tape->item(0, (TAPE_OFFSET + i))->setText(tape[i]);
 		}
 		ui.tape->item(0, (TAPE_OFFSET + machine->getTapePointer()))->setBackgroundColor(Qt::green);
+
+		if (machine->isControllerLoaded())
+		{
+			showNextCommand();
+		}
 	}
 }
 
@@ -179,7 +184,9 @@ void TuringMachine::showLoadedController()
  					ui.controller->setItem(i, j,item);
 				}
 			}
+
 			showCurrentState();
+
 			if (machine->isTapeLoaded())
 			{
 				showNextCommand();
