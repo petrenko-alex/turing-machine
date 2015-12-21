@@ -56,6 +56,8 @@ public:
 	QString		 getBeginState() const;
 	QString		 getEndState() const;
 	QString		 getCurrentState() const;
+	QStringList  exportTape() const;
+	QMap<QString, Command> getCommands() const;
 	
 
 	/* ћетоды проверки и управлени€ состо€нием машины */

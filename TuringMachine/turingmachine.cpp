@@ -108,11 +108,11 @@ void TuringMachine::addSymbol()
 void TuringMachine::importTape()
 {
 	ui.tape->blockSignals(true);
-	/*QString fileName = QFileDialog::getOpenFileName( this, 
+	QString fileName = QFileDialog::getOpenFileName( this, 
 													 "Выберите файл ленты", 
 													 "./", 
-													 "JSON файлы(*.json)");*/
-	QString fileName = DEFAULT_TAPE_FILE;
+													 "JSON файлы(*.json)");
+	//QString fileName = DEFAULT_TAPE_FILE;
 
 	if (!fileName.isEmpty())
 	{
@@ -139,6 +139,7 @@ void TuringMachine::importTape()
 			}
 			file.close();
 			machine->setTapeLoaded();
+			ui.exportTape->setEnabled(true);
 			showLoadedTape();
 		}
 	}
@@ -147,17 +148,31 @@ void TuringMachine::importTape()
 
 void TuringMachine::exportTape()
 {
-	// #TODO: Сохранение ленты в json файл.
+	QString fileName = QFileDialog::getSaveFileName( this,
+													 "Сохранить файл ленты",
+													 "./",
+												     "JSON файлы(*.json)");
+
+	if (!fileName.isEmpty())
+	{
+		QFile file(fileName);
+		if (file.open(QIODevice::WriteOnly | QIODevice::Text))
+		{
+			QByteArray toExport = prepareDataToExportTape();
+			file.write(toExport);
+			file.close();
+		}
+	}
 }
 
 void TuringMachine::importController()
 {
 	ui.controller->blockSignals(true);
-	/*QString fileName = QFileDialog::getOpenFileName(	this,
+	QString fileName = QFileDialog::getOpenFileName(	this,
 														"Выберите файл ленты",
 														"./",
-														"JSON файлы(*.json)");*/
-	QString fileName = DEFAULT_CONTROLLER_FILE;
+														"JSON файлы(*.json)");
+	//QString fileName = DEFAULT_CONTROLLER_FILE;
 
 	if (!fileName.isEmpty())
 	{
@@ -187,7 +202,21 @@ void TuringMachine::importController()
 
 void TuringMachine::exportController()
 {
-	// #TODO: Сохранение УУ в json файл.
+	QString fileName = QFileDialog::getSaveFileName( this,
+													 "Сохранить файл управляющего устройства",
+													  "./",
+													  "JSON файлы(*.json)");
+
+	if (!fileName.isEmpty())
+	{
+		QFile file(fileName);
+		if (file.open(QIODevice::WriteOnly | QIODevice::Text))
+		{
+			QByteArray toExport = prepareDataToExportController();
+			file.write(toExport);
+			file.close();
+		}
+	}
 }
 
 void TuringMachine::machineStep()
@@ -520,6 +549,7 @@ void TuringMachine::modifyCurrentTapeSymbol(QTableWidgetItem* item)
 			machine->setTape(list, itemIndex);
 			ui.tape->item(0, machine->getTapePointer())->setBackgroundColor(Qt::green);
 			machine->setTapeLoaded();
+			ui.exportTape->setEnabled(true);
 		}
 	}
 	else
@@ -590,6 +620,59 @@ void TuringMachine::modifyCurrentCommand(QTableWidgetItem* item)
 		machine->addComand(key, cmd);	
 	}
 	ui.controller->blockSignals(false);
+}
+
+QByteArray TuringMachine::prepareDataToExportTape() const
+{
+	QJsonObject main;
+	QJsonArray tapeView = QJsonArray::fromStringList(machine->exportTape());
+	QJsonValue emptySymbol(machine->getEmptySymbol());
+	QJsonValue pointerIndex((int)machine->getTapePointer() - TAPE_OFFSET);
+
+	main.insert("tape-view", tapeView);
+	main.insert("empty-symbol", emptySymbol);
+	main.insert("pointer-index", pointerIndex);
+
+	return QJsonDocument(main).toJson(QJsonDocument::Indented);
+}
+
+QByteArray TuringMachine::prepareDataToExportController() const
+{
+	QJsonObject main;
+	QJsonArray alphabet = QJsonArray::fromStringList(machine->getAlphabet());
+	QJsonArray states = QJsonArray::fromStringList(machine->getStates(true));
+	QJsonValue beginState(machine->getBeginState());
+	QJsonValue endState(machine->getEndState());
+
+	QJsonObject commands;
+	QMap<QString, Command> controllerCommands = machine->getCommands();
+	QStringList keys = controllerCommands.keys();
+
+	/* Экспортируем команды */
+	for (auto i : keys)
+	{
+		QJsonObject tmp;
+		Command cmd = controllerCommands.value(i);
+
+		QJsonValue newSymbol(cmd.newSymbol);
+		QJsonValue newState(cmd.newState);
+		QJsonValue action(cmd.action);
+
+		tmp.insert("new-symbol", newSymbol);
+		tmp.insert("new-state", newState);
+		tmp.insert("action", action);
+
+		commands.insert(i, tmp);
+	}
+
+
+	main.insert("alphabet", alphabet);
+	main.insert("states", states);
+	main.insert("begin-state", beginState);
+	main.insert("end-state", endState);
+	main.insert("commands", commands);
+
+	return QJsonDocument(main).toJson(QJsonDocument::Indented);
 }
 
 void TuringMachine::addRow(QTableWidget* table, const QString& row)

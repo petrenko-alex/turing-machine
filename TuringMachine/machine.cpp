@@ -138,6 +138,18 @@ QString Machine::getCurrentState() const
 	return controller->getCurrentState();
 }
 
+QStringList Machine::exportTape() const
+{
+	QStringList toExport = tape->getTapeView();
+	toExport.removeAll(TAPE_BLANK);
+	return toExport;
+}
+
+QMap<QString, Command> Machine::getCommands() const
+{
+	return controller->commands;
+}
+
 QString Machine::getCurrentTapeSymbol() const
 {
 	return tape->getCurrentSymbol();

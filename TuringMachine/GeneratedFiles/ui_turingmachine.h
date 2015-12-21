@@ -162,6 +162,7 @@ public:
 
         exportTape = new QPushButton(groupBox);
         exportTape->setObjectName(QStringLiteral("exportTape"));
+        exportTape->setEnabled(false);
         exportTape->setMinimumSize(QSize(75, 23));
         exportTape->setMaximumSize(QSize(75, 23));
         exportTape->setFont(font1);

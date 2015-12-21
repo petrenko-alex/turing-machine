@@ -64,6 +64,8 @@ private slots:
 	void modifyCurrentCommand(QTableWidgetItem* item);
 
 private:
+	QByteArray prepareDataToExportTape() const;
+	QByteArray prepareDataToExportController() const;
 	void addRow(QTableWidget* table, const QString& row);
 	void addColumn(QTableWidget* table, const QString& column);
 	void initializeTape();
