@@ -6,6 +6,7 @@
 #include "tape.h"
 
 #define TAPE_BLANK	"-"
+#define DEFAULT_EMPTY_SYMBOL "E"
 
 class Machine : public QObject
 {
@@ -26,7 +27,7 @@ public:
 	/* Сет-методы */
 	void setTape(const QStringList& tapeView, 
 				 unsigned int tapePointer,
-				 const QString& emptySymbol);
+				 const QString& emptySymbol = DEFAULT_EMPTY_SYMBOL);
 	void setStates(const QStringList& states);
 	void setCurrentState(const QString& state);
 	void setAlphabet(const QStringList& alphabet);
@@ -37,6 +38,7 @@ public:
 	void prependToTape(const QString& symbol);
 	void incrementTapePointer();
 	void decrementTapePointer();
+	void setTapeSymbol(const QString& symbol, unsigned int index);
 
 	/* Гет-методы */
 	QStringList  getTape() const;
@@ -55,6 +57,7 @@ public:
 	bool isFinished() const;
 	void setTapeLoaded();
 	void setControllerLoaded();
+	bool isTapeSymbolValid(const QString& symbol) const;
 
 	/* Перезагрузка машины */
 	void reset();

@@ -60,6 +60,11 @@ void Machine::decrementTapePointer()
 	tape->decrementPointer();
 }
 
+void Machine::setTapeSymbol(const QString& symbol, unsigned int index)
+{
+	tape->setSymbolAt(symbol, index);
+}
+
 QStringList Machine::getStates(bool includeStopState) const
 {
 	return controller->getStates(includeStopState);
@@ -141,6 +146,15 @@ void Machine::setControllerLoaded()
 	{
 		verifyTape();
 	}
+}
+
+bool Machine::isTapeSymbolValid(const QString& symbol) const
+{
+	if (controllerLoaded)
+	{
+		return controller->isAlphabetSymbolValid(symbol);
+	}
+	return true;
 }
 
 void Machine::reset()

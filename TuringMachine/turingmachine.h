@@ -56,7 +56,8 @@ private slots:
 	void showNextCommand();
 	void repaintTape();
 	void setControlButtonsEnabled(bool isEnabled);
-	void modifyTape(int row,int column);
+	void rememberCurrentTapeSymbol(QTableWidgetItem* item);
+	void modifyCurrentTapeSymbol(QTableWidgetItem* item);
 
 private:
 	void initializeTape();
@@ -70,6 +71,8 @@ private:
 	Ui::TuringMachineClass ui;
 	Machine* machine;
 	int tapeOffet;
+
+	QString currentTapeSymbol;
 };
 
 #endif // TURINGMACHINE_H

@@ -97,6 +97,7 @@ public:
         font.setBold(false);
         font.setWeight(50);
         tape->setFont(font);
+        tape->setEditTriggers(QAbstractItemView::DoubleClicked);
         tape->setTextElideMode(Qt::ElideMiddle);
         tape->horizontalHeader()->setVisible(false);
         tape->horizontalHeader()->setCascadingSectionResizes(true);
@@ -279,6 +280,14 @@ public:
         statusBar = new QStatusBar(TuringMachineClass);
         statusBar->setObjectName(QStringLiteral("statusBar"));
         TuringMachineClass->setStatusBar(statusBar);
+        QWidget::setTabOrder(step, begin);
+        QWidget::setTabOrder(begin, stop);
+        QWidget::setTabOrder(stop, exportTape);
+        QWidget::setTabOrder(exportTape, importTape);
+        QWidget::setTabOrder(importTape, tape);
+        QWidget::setTabOrder(tape, controller);
+        QWidget::setTabOrder(controller, exportController);
+        QWidget::setTabOrder(exportController, importController);
 
         retranslateUi(TuringMachineClass);
 
