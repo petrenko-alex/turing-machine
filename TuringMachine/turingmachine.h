@@ -53,6 +53,7 @@ private slots:
 	void showLoadedController();
 	void showCurrentState();
 	void showNextCommand();
+	void repaintTape();
 
 private:
 	void initializeTape();

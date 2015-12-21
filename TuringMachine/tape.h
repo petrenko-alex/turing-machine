@@ -26,6 +26,8 @@ public:
 	void		 setCurrentTapePointer(int index) throw(QString&);
 	void		 appendToTape(const QString &symbol);
 	void		 prependToTape(const QString &symbol);
+	void		 incrementPointer();
+	void	     decrementPointer();
 
 private:
 	friend class Tape;

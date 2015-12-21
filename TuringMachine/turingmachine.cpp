@@ -143,33 +143,48 @@ void TuringMachine::machineFinished()
 
 void TuringMachine::machineTapeSymbolChanged(unsigned int index, QString newSymbol)
 {
-	ui.tape->item(0, tapeOffet + index)->setText(newSymbol);
+	QTableWidgetItem* item = ui.tape->item(0, index);
+
+	if (item != nullptr)
+	{
+		ui.tape->item(0, index)->setText(newSymbol);
+	}
+	else
+	{
+		qDebug() << "Метод:machineTapeSymbolChanged()\nНе удалось перезаписать текущий символ ленты.";
+	}
 }
 
 void TuringMachine::machineTapePointerChanged(unsigned int oldTapePointer, unsigned int newTapePointer)
 {
-	unsigned int oldPointer = tapeOffet + oldTapePointer;
-	unsigned int newPointer = 0;
-
+	QTableWidgetItem* item = nullptr;
+	int tapeSize = ui.tape->columnCount();
+	
 	/* Удаляем старый указатель */
-	ui.tape->item(0, oldPointer)->setBackgroundColor(Qt::white); 
+	ui.tape->item(0, oldTapePointer)->setBackgroundColor(Qt::white);
 
-	if (oldTapePointer == 0 && newTapePointer == 0)
-	/* В ленту добавился крайнией символ слева */
+	if ((oldTapePointer == 0 && newTapePointer == 0) ||
+		(newTapePointer == tapeSize))
+	/* В ленту добавился крайнией символ слева или справа */
 	{
-		if (--tapeOffet < 0)
-		{
-			tapeOffet = 0;
-		}
+		//ui.tape->setColumnCount(tapeSize + 1);
+		ui.tape->insertColumn(newTapePointer);
+		item = new QTableWidgetItem(machine->getEmptySymbol());
+		item->setTextAlignment(Qt::AlignCenter);
+		ui.tape->setItem(0, newTapePointer, item);
+		item->setBackgroundColor(Qt::green);
 	}
-	newPointer = tapeOffet + newTapePointer;
-	QTableWidgetItem* tmp = ui.tape->item(0, newPointer);
-	tmp->setBackgroundColor(Qt::green);
+	else
+	{
+		item = ui.tape->item(0, newTapePointer);
+		item->setBackgroundColor(Qt::green);
+		item->setTextAlignment(Qt::AlignCenter);
+	}
 
 	/* Ставим пустой символ машины, если в текущей ячейке ленты пусто */
-	if (tmp->text() == TAPE_BLANK)
+	if (item->text() == TAPE_BLANK)
 	{
-		tmp->setText(machine->getEmptySymbol());
+		item->setText(machine->getEmptySymbol());
 	}
 }
 
@@ -203,6 +218,10 @@ void TuringMachine::expandTape(int currentRow, int currentColumn, int previousRo
 		if (machine->isTapeLoaded())
 		{
 			machine->prependToTape(TAPE_BLANK);
+			if (machine->getTapePointer() == 0)
+			{
+				machine->incrementTapePointer();
+			}
 		}
 	}
 }
@@ -310,6 +329,11 @@ void TuringMachine::showNextCommand()
 
 		ui.nextCommand->setText(text);
 	}
+}
+
+void TuringMachine::repaintTape()
+{
+	
 }
 
 void TuringMachine::initializeTape()

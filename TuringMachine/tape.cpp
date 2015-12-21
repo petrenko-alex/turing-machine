@@ -77,6 +77,22 @@ void Tape::prependToTape(const QString &symbol)
 	tapeView.prepend(symbol);
 }
 
+void Tape::incrementPointer()
+{
+	if (tapePointer < (tapeView.size() - 1) )
+	{
+		++tapePointer;
+	}
+}
+
+void Tape::decrementPointer()
+{
+	if (tapePointer > 0)
+	{
+		--tapePointer;
+	}
+}
+
 void Tape::setData(const QStringList &tapeView, unsigned int tapePointer, const QString& emptySymbol)
 {
 	this->tapeView	  = tapeView;

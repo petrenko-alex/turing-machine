@@ -50,6 +50,16 @@ void Machine::prependToTape(const QString& symbol)
 	tape->prependToTape(symbol);
 }
 
+void Machine::incrementTapePointer()
+{
+	tape->incrementPointer();
+}
+
+void Machine::decrementTapePointer()
+{
+	tape->decrementPointer();
+}
+
 QStringList Machine::getStates(bool includeStopState) const
 {
 	return controller->getStates(includeStopState);
@@ -143,16 +153,29 @@ void Machine::reset()
 
 void Machine::oneStep(bool emitSignals)
 {
+	/* Получаем команду по символу ленты и текущему состоянию */
 	QString currentState = getCurrentState();
 	QString currentSymbol = getCurrentTapeSymbol();
+
 	QString command = getCommand(currentSymbol + currentState);
+	if (command.isEmpty())
+	{
+		machineState = MachineState::FINISHED;
+		QString errorString = "Не задана команда для символа \"" + 
+							   currentSymbol + "\" и состояния \"" + 
+							   currentState + "\".";
+		emit machineError(errorString);
+		return;
+	}
+
+	/* Разбираем команду на данные */
 	QStringList splittedCommand = command.split('-');
 	QString newSymbol = splittedCommand.at(0);
 	QString newState = splittedCommand.at(1);
 	QString action = splittedCommand.at(2);
 	unsigned int oldTapePointer = tape->getTapePointer();
 
-	/* Устанавливаем ноый символ в старую позицию ленты */
+	/* Устанавливаем новый символ в старую позицию ленты */
 	tape->setSymbolAt(newSymbol,oldTapePointer);
 	if (emitSignals)
 	{
@@ -168,6 +191,7 @@ void Machine::oneStep(bool emitSignals)
 	}
 	catch (QString& errorString)
 	{
+		machineState = MachineState::FINISHED;
 		emit machineError(errorString);
 		return;
 	}
@@ -210,7 +234,7 @@ void Machine::verifyTape()
 
 	for (auto i : tapeView)
 	{
-		if (!controller->isAlphabetSymbolValid(i))
+		if (i != "-" && !controller->isAlphabetSymbolValid(i))
 		{
 			isOk = false;
 			break;

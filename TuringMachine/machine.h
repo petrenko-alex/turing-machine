@@ -32,6 +32,8 @@ public:
 	void addComand(const QString& key, const Command& cmd) throw(QString&);
 	void appendToTape(const QString& symbol);
 	void prependToTape(const QString& symbol);
+	void incrementTapePointer();
+	void decrementTapePointer();
 
 	/* Гет-методы */
 	QStringList  getTape() const;
