@@ -35,7 +35,6 @@ private:
 	QString endState;
 	QString beginState;
 	QString currentState;
-	QString emptyState;
 	QStringList states;
 	QStringList alphabet;
 	QMap<QString, Command> commands;

@@ -25,6 +25,21 @@ void Machine::setCurrentState(const QString& state)
 	controller->setCurrentState(state);
 }
 
+void Machine::setBeginState(const QString& state)
+{
+	controller->beginState = state;
+}
+
+void Machine::setEndState(const QString& state)
+{
+	controller->endState = state;
+}
+
+void Machine::setEmptySymbol(const QString& symbol)
+{
+	tape->emptySymbol = symbol;
+}
+
 void Machine::setAlphabet(const QStringList& alphabet)
 {
 	controller->setAlphabet(alphabet);
@@ -38,6 +53,16 @@ void Machine::setBeginEndStates(const QString& beginState, const QString& endSta
 void Machine::addComand(const QString& key, const Command& cmd) throw(QString&)
 {
 	controller->addComand(key, cmd);
+}
+
+void Machine::addState(const QString& state)
+{
+	controller->states.append(state);
+}
+
+void Machine::addSymbol(const QString& symbol)
+{
+	controller->alphabet.append(symbol);
 }
 
 void Machine::appendToTape(const QString& symbol)
@@ -68,6 +93,16 @@ void Machine::setTapeSymbol(const QString& symbol, unsigned int index)
 QStringList Machine::getStates(bool includeStopState) const
 {
 	return controller->getStates(includeStopState);
+}
+
+QString Machine::getBeginState() const
+{
+	return controller->beginState;
+}
+
+QString Machine::getEndState() const
+{
+	return controller->endState;
 }
 
 QStringList Machine::getTape() const
@@ -155,6 +190,25 @@ bool Machine::isTapeSymbolValid(const QString& symbol) const
 		return controller->isAlphabetSymbolValid(symbol);
 	}
 	return true;
+}
+
+bool Machine::isStateValid(const QString& state) const
+{
+	if (controllerLoaded)
+	{
+		return controller->isStateValid(state);
+	}
+	return true;
+}
+
+bool Machine::isStateUnique(const QString& state) const
+{
+	return !(controller->states.contains(state, Qt::CaseSensitive));
+}
+
+bool Machine::isSymbolUnique(const QString& symbol) const
+{
+	return !(controller->alphabet.contains(symbol, Qt::CaseSensitive));
 }
 
 void Machine::reset()

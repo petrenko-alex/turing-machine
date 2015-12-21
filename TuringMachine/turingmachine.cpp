@@ -7,7 +7,6 @@ TuringMachine::TuringMachine(QWidget *parent)
 	setControlButtonsEnabled(false);
 	ui.stop->setEnabled(false);
 	tapeOffet = TAPE_OFFSET;
-	block = false;
 	currentTapeSymbol = "";
 	machine = new Machine;
 	ui.tape->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
@@ -21,9 +20,94 @@ TuringMachine::~TuringMachine()
 	delete machine;
 }
 
+void TuringMachine::addState()
+{
+	ui.controller->blockSignals(true);
+	QString newState = ui.newState->text();
+
+	if (!newState.isEmpty())
+	{
+		bool isBeginState = ui.beginState->isChecked();
+		bool isEndState = ui.endState->isChecked();
+		bool isCurrState = ui.currState->isChecked();
+
+		if (machine->isStateUnique(newState))
+		{
+			machine->addState(newState);
+
+			if (isBeginState || machine->getBeginState().isEmpty())
+			{
+				machine->setBeginState(newState);
+			}
+
+			if (isEndState || machine->getEndState().isEmpty())
+			{
+				machine->setEndState(newState);
+			}
+
+			if (isCurrState || machine->getCurrentState().isEmpty())
+			{
+				machine->setCurrentState(newState);
+			}
+
+			addRow(ui.controller, newState);
+		}
+		else
+		{
+			QMessageBox::warning(this, "Ошибка", "Такое состояние уже существует в машине.");
+			ui.controller->blockSignals(false);
+			return;
+		}
+	}
+	else
+	{
+		QMessageBox::warning(this, "Ошибка", "Название нового состояния не введено.");
+		ui.controller->blockSignals(false);
+		return;
+	}
+	ui.controller->blockSignals(false);
+}
+
+void TuringMachine::addSymbol()
+{
+	ui.controller->blockSignals(true);
+	QString newSymbol = ui.newSymbol->text();
+
+	if (!newSymbol.isEmpty())
+	{
+		bool isEmptySymbol = ui.emptySymbol->isChecked();
+
+		if (machine->isSymbolUnique(newSymbol))
+		{
+			machine->addSymbol(newSymbol);
+
+			if (isEmptySymbol || machine->getEmptySymbol().isEmpty())
+			{
+				machine->setEmptySymbol(newSymbol);
+			}
+			
+			addColumn(ui.controller, newSymbol);
+			showCurrentState();
+		}
+		else
+		{
+			QMessageBox::warning(this, "Ошибка", "Такой символ уже существует в алфавите машины.");
+			ui.controller->blockSignals(false);
+			return;
+		}
+	}
+	else
+	{
+		QMessageBox::warning(this, "Ошибка", "Символ не введен.");
+		ui.controller->blockSignals(false);
+		return;
+	}
+	ui.controller->blockSignals(false);
+}
+
 void TuringMachine::importTape()
 {
-	disconnect(ui.tape, SIGNAL(itemChanged(QTableWidgetItem*)), this, SLOT(modifyCurrentTapeSymbol(QTableWidgetItem*)));
+	ui.tape->blockSignals(true);
 	/*QString fileName = QFileDialog::getOpenFileName( this, 
 													 "Выберите файл ленты", 
 													 "./", 
@@ -50,6 +134,7 @@ void TuringMachine::importTape()
 			{
 				QMessageBox::critical(this, "Ошибка разбора файла \"" + fileName + "\"", errorString);
 				file.close();
+				ui.tape->blockSignals(false);
 				return;
 			}
 			file.close();
@@ -57,7 +142,7 @@ void TuringMachine::importTape()
 			showLoadedTape();
 		}
 	}
-	connect(ui.tape, SIGNAL(itemChanged(QTableWidgetItem*)), this, SLOT(modifyCurrentTapeSymbol(QTableWidgetItem*)));
+	ui.tape->blockSignals(false);
 }
 
 void TuringMachine::exportTape()
@@ -67,6 +152,7 @@ void TuringMachine::exportTape()
 
 void TuringMachine::importController()
 {
+	ui.controller->blockSignals(true);
 	/*QString fileName = QFileDialog::getOpenFileName(	this,
 														"Выберите файл ленты",
 														"./",
@@ -95,6 +181,7 @@ void TuringMachine::importController()
 			showLoadedController();
 		}
 	}
+	ui.controller->blockSignals(false);
 }
 
 void TuringMachine::exportController()
@@ -104,7 +191,7 @@ void TuringMachine::exportController()
 
 void TuringMachine::machineStep()
 {
-	disconnect(ui.tape, SIGNAL(itemChanged(QTableWidgetItem*)), this, SLOT(modifyCurrentTapeSymbol(QTableWidgetItem*)));
+	ui.tape->blockSignals(true);
 	if (machine->isReady())
 	{
 		machine->oneStep(true);
@@ -115,12 +202,12 @@ void TuringMachine::machineStep()
 	{
 		QMessageBox::warning(this, "Машина", "Машина еще не готова к работе.\nПожалуйста, убедитесь, что лента и управляющее устройство заданы.");
 	}
-	connect(ui.tape, SIGNAL(itemChanged(QTableWidgetItem*)), this, SLOT(modifyCurrentTapeSymbol(QTableWidgetItem*)));
+	ui.tape->blockSignals(false);
 }
 
 void TuringMachine::machineBeginWork()
 {
-	disconnect(ui.tape, SIGNAL(itemChanged(QTableWidgetItem*)), this, SLOT(modifyCurrentTapeSymbol(QTableWidgetItem*)));
+	ui.tape->blockSignals(true);
 	if (machine->isReady())
 	{
 		ui.stop->setEnabled(true);
@@ -130,13 +217,14 @@ void TuringMachine::machineBeginWork()
 	{
 		QMessageBox::warning(this, "Машина", "Машина еще не готова к работе.\nПожалуйста, убедитесь, что лента и управляющее устройство заданы.");
 	}
+	ui.tape->blockSignals(false);
 }
 
 void TuringMachine::machineStopWork()
 {
-	disconnect(ui.tape, SIGNAL(itemChanged(QTableWidgetItem*)), this, SLOT(modifyCurrentTapeSymbol(QTableWidgetItem*)));
+	ui.tape->blockSignals(true);
 	machine->stopWork();
-	connect(ui.tape, SIGNAL(itemChanged(QTableWidgetItem*)), this, SLOT(modifyCurrentTapeSymbol(QTableWidgetItem*)));
+	ui.tape->blockSignals(false);
 }
 
 void TuringMachine::machineErrorReceived(QString &errorString)
@@ -150,7 +238,7 @@ void TuringMachine::machineFinished()
 	ui.nextCommand->setText("Машина завершила работу");
 	showCurrentState();
 	QMessageBox::information(this, "Состояние машины", "Машина достигла конечного состояния");
-	connect(ui.tape, SIGNAL(itemChanged(QTableWidgetItem*)), this, SLOT(modifyCurrentTapeSymbol(QTableWidgetItem*)));
+	ui.tape->blockSignals(false);
 }
 
 void TuringMachine::machineStopped()
@@ -158,12 +246,12 @@ void TuringMachine::machineStopped()
 	ui.stop->setEnabled(false);
 	showCurrentState();
 	showNextCommand();
-	connect(ui.tape, SIGNAL(itemChanged(QTableWidgetItem*)), this, SLOT(modifyCurrentTapeSymbol(QTableWidgetItem*)));
+	ui.tape->blockSignals(false);
 }
 
 void TuringMachine::machineTapeSymbolChanged(unsigned int index, QString newSymbol)
 {
-	disconnect(ui.tape, SIGNAL(itemChanged(QTableWidgetItem*)), this, SLOT(modifyCurrentTapeSymbol(QTableWidgetItem*)));
+	ui.tape->blockSignals(true);
 	QTableWidgetItem* item = ui.tape->item(0, index);
 
 	if (item != nullptr)
@@ -174,12 +262,12 @@ void TuringMachine::machineTapeSymbolChanged(unsigned int index, QString newSymb
 	{
 		qDebug() << "Метод:machineTapeSymbolChanged()\nНе удалось перезаписать текущий символ ленты.";
 	}
-	connect(ui.tape, SIGNAL(itemChanged(QTableWidgetItem*)), this, SLOT(modifyCurrentTapeSymbol(QTableWidgetItem*)));
+	ui.tape->blockSignals(false);
 }
 
 void TuringMachine::machineTapePointerChanged(unsigned int oldTapePointer, unsigned int newTapePointer)
 {
-	disconnect(ui.tape, SIGNAL(itemChanged(QTableWidgetItem*)), this, SLOT(modifyCurrentTapeSymbol(QTableWidgetItem*)));
+	ui.tape->blockSignals(true);
 	QTableWidgetItem* item = nullptr;
 	int tapeSize = ui.tape->columnCount();
 	
@@ -208,12 +296,12 @@ void TuringMachine::machineTapePointerChanged(unsigned int oldTapePointer, unsig
 	{
 		item->setText(machine->getEmptySymbol());
 	}
-	connect(ui.tape, SIGNAL(itemChanged(QTableWidgetItem*)), this, SLOT(modifyCurrentTapeSymbol(QTableWidgetItem*)));
+	ui.tape->blockSignals(false);
 }
 
 void TuringMachine::expandTape(int currentRow, int currentColumn, int previousRow, int previousColumn)
 {
-	disconnect(ui.tape, SIGNAL(itemChanged(QTableWidgetItem*)), this, SLOT(modifyCurrentTapeSymbol(QTableWidgetItem*)));
+	ui.tape->blockSignals(true);
 	int columns = ui.tape->columnCount();
 
 	if (currentColumn == (columns - 1))
@@ -248,12 +336,12 @@ void TuringMachine::expandTape(int currentRow, int currentColumn, int previousRo
 			}
 		}
 	}
-	connect(ui.tape, SIGNAL(itemChanged(QTableWidgetItem*)), this, SLOT(modifyCurrentTapeSymbol(QTableWidgetItem*)));
+	ui.tape->blockSignals(false);
 }
 
 void TuringMachine::showLoadedTape()
 {
-	disconnect(ui.tape, SIGNAL(itemChanged(QTableWidgetItem*)), this, SLOT(modifyCurrentTapeSymbol(QTableWidgetItem*)));
+	ui.tape->blockSignals(true);
 	QStringList tape = machine->getTape ();
 	int size = tape.size();
 	ui.tape->setColumnCount(size);
@@ -281,11 +369,12 @@ void TuringMachine::showLoadedTape()
 			setControlButtonsEnabled(true);
 		}
 	}
-	connect(ui.tape, SIGNAL(itemChanged(QTableWidgetItem*)), this, SLOT(modifyCurrentTapeSymbol(QTableWidgetItem*)));
+	ui.tape->blockSignals(false);
 }
 
 void TuringMachine::showLoadedController()
 {
+	ui.tape->blockSignals(true);
 	QStringList alphabet = machine->getAlphabet();
 	QStringList states = machine->getStates(false);
 	int columns = alphabet.size();
@@ -325,10 +414,12 @@ void TuringMachine::showLoadedController()
 			}
 		}
 	}
+	ui.tape->blockSignals(false);
 }
 
 void TuringMachine::showCurrentState()
 {
+	ui.controller->blockSignals(true);
 	int rows = ui.controller->rowCount();
 	QString currentState = machine->getCurrentState();
 
@@ -343,6 +434,7 @@ void TuringMachine::showCurrentState()
 		}
 	}
 	ui.currentState->setText(currentState);
+	ui.controller->blockSignals(false);
 }
 
 void TuringMachine::showNextCommand()
@@ -370,7 +462,7 @@ void TuringMachine::showNextCommand()
 
 void TuringMachine::repaintTape()
 {
-	disconnect(ui.tape, SIGNAL(itemChanged(QTableWidgetItem*)), this, SLOT(modifyCurrentTapeSymbol(QTableWidgetItem*)));
+	ui.tape->blockSignals(true);
 	ui.tape->clear();
 	QStringList tapeView = machine->getTape();
 	int tapeSize = tapeView.size();
@@ -386,7 +478,7 @@ void TuringMachine::repaintTape()
 	/* Устанавливаем указатель */
 	unsigned int tapePointer = machine->getTapePointer();
 	ui.tape->item(0,tapePointer)->setBackgroundColor(Qt::green);
-	connect(ui.tape, SIGNAL(itemChanged(QTableWidgetItem*)), this, SLOT(modifyCurrentTapeSymbol(QTableWidgetItem*)));
+	ui.tape->blockSignals(false);
 }
 
 void TuringMachine::setControlButtonsEnabled(bool isEnabled)
@@ -401,9 +493,15 @@ void TuringMachine::rememberCurrentTapeSymbol(QTableWidgetItem* item)
 	qDebug() << "Cell symbol - " + currentTapeSymbol;
 }
 
+void TuringMachine::rememberCurrentCommand(QTableWidgetItem* item)
+{
+	currentCommand = item->text();
+	qDebug() << "Command - " + currentCommand;
+}
+
 void TuringMachine::modifyCurrentTapeSymbol(QTableWidgetItem* item)
 {
-	disconnect(ui.tape, SIGNAL(itemChanged(QTableWidgetItem*)), this, SLOT(modifyCurrentTapeSymbol(QTableWidgetItem*)));
+	ui.tape->blockSignals(true);
 	int itemIndex = item->column();
 	QString itemText = item->text();
 
@@ -439,7 +537,97 @@ void TuringMachine::modifyCurrentTapeSymbol(QTableWidgetItem* item)
 								 "\" в ленту, так как этот символ не найден в алфавите машины.");
 		}
 	}
-	connect(ui.tape, SIGNAL(itemChanged(QTableWidgetItem*)), this, SLOT(modifyCurrentTapeSymbol(QTableWidgetItem*)));
+	ui.tape->blockSignals(false);
+}
+
+void TuringMachine::modifyCurrentCommand(QTableWidgetItem* item)
+{
+	ui.controller->blockSignals(true);
+	QString newCommand = item->text();
+	QString state = ui.controller->verticalHeaderItem(item->row())->text ();
+	QString symbol = ui.controller->horizontalHeaderItem(item->column())->text();
+
+	if (newCommand.count('-') != 2)
+	{
+		QMessageBox::warning(this, "Ошибка", "Неверный синтаксис команды.\nКоманда должна задаваться:\n<символ алфавита>-<состояния>-<действие>");
+		item->setText(currentCommand);
+		ui.controller->blockSignals(false);
+		return;
+	}
+	else
+	{
+		QStringList list = newCommand.split('-');
+
+		if (!machine->isTapeSymbolValid(list[0]))
+		{
+			QMessageBox::warning(this, "Ошибка", "Символ \"" + list[0] + "\" отсутствует в алфавите.");
+			item->setText(currentCommand);
+			ui.controller->blockSignals(false);
+			return;
+		}
+
+		if (!machine->isStateValid(list[1]))
+		{
+			QMessageBox::warning(this, "Ошибка", "Состояние \"" + list[1] + "\" отсутствует в множестве состояний.");
+			item->setText(currentCommand);
+			ui.controller->blockSignals(false);
+			return;
+		}
+
+		if (list[2] != "R" && list[2] != "L" && list[2] != "N")
+		{
+			QMessageBox::warning(this, "Ошибка", "Неизвестное действие \"" + list[2] + "\".\nВозможные действия:\"R\",\"L\",\"N\".");
+			item->setText(currentCommand);
+			ui.controller->blockSignals(false);
+			return;
+		}
+
+		/* Создаем команду */
+		Command cmd(list[0], list[1], list[2]);
+		QString key = symbol + state;
+		machine->addComand(key, cmd);	
+	}
+	ui.controller->blockSignals(false);
+}
+
+void TuringMachine::addRow(QTableWidget* table, const QString& row)
+{
+	int rows = table->rowCount();
+	table->insertRow(rows);
+	QTableWidgetItem* header = new QTableWidgetItem(row);
+	table->setVerticalHeaderItem(rows, header);
+	table->setRowCount(rows + 1);
+
+	int columns = table->columnCount();
+	for (int i = 0; i < columns; ++i)
+	{
+		QTableWidgetItem* item = table->item(rows, i);
+		if (item == nullptr)
+		{
+			item = new QTableWidgetItem();
+			table->setItem(rows, i, item);
+		}
+	}
+}
+
+void TuringMachine::addColumn(QTableWidget* table, const QString& column)
+{
+	int columns = table->columnCount();
+	table->insertColumn(columns);
+	QTableWidgetItem* header = new QTableWidgetItem(column);
+	table->setHorizontalHeaderItem(columns, header);
+	table->setColumnCount(columns + 1);
+
+	int rows = table->rowCount();
+	for (int i = 0; i < rows; ++i)
+	{
+		QTableWidgetItem* item = table->item(i, columns);
+		if (item == nullptr)
+		{
+			item = new QTableWidgetItem();
+			table->setItem(i, columns, item);
+		}
+	}
 }
 
 void TuringMachine::initializeTape()
@@ -486,6 +674,10 @@ void TuringMachine::setConnections() const
 	connect(machine, SIGNAL(tapePointerChanged(unsigned int, unsigned int)), this, SLOT(machineTapePointerChanged(unsigned int, unsigned int)));
 	connect(machine, SIGNAL(tapeChanged()), this, SLOT(repaintTape()));
 	connect(machine, SIGNAL(machineStopped()), this, SLOT(machineStopped()));
+	connect(ui.addNewState, SIGNAL(clicked(bool)), SLOT(addState()));
+	connect(ui.addNewSymbol, SIGNAL(clicked(bool)), SLOT(addSymbol()));
+	connect(ui.controller, SIGNAL(itemPressed(QTableWidgetItem*)), this, SLOT(rememberCurrentCommand(QTableWidgetItem*)));
+	connect(ui.controller, SIGNAL(itemChanged(QTableWidgetItem*)), this, SLOT(modifyCurrentCommand(QTableWidgetItem*)));
 }
 
 void TuringMachine::parseControllerFile(const QString& data) throw(QString&)

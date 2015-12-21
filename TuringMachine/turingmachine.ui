@@ -26,8 +26,8 @@
    <string>TuringMachine</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <layout class="QVBoxLayout" name="verticalLayout">
-    <item>
+   <layout class="QGridLayout" name="gridLayout_3">
+    <item row="0" column="0">
      <widget class="QGroupBox" name="groupBox">
       <property name="minimumSize">
        <size>
@@ -233,7 +233,7 @@
       </layout>
      </widget>
     </item>
-    <item>
+    <item row="1" column="0">
      <widget class="QGroupBox" name="groupBox_2">
       <property name="minimumSize">
        <size>
@@ -269,6 +269,9 @@
            <width>581</width>
            <height>371</height>
           </size>
+         </property>
+         <property name="editTriggers">
+          <set>QAbstractItemView::DoubleClicked</set>
          </property>
          <attribute name="horizontalHeaderCascadingSectionResizes">
           <bool>false</bool>
@@ -387,22 +390,6 @@
          </layout>
         </widget>
        </item>
-       <item row="2" column="2" rowspan="2">
-        <spacer name="verticalSpacer">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeType">
-          <enum>QSizePolicy::Fixed</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>17</width>
-           <height>295</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
        <item row="3" column="0">
         <layout class="QHBoxLayout" name="horizontalLayout_4">
          <item>
@@ -460,6 +447,197 @@
           </size>
          </property>
         </spacer>
+       </item>
+       <item row="2" column="2">
+        <widget class="QGroupBox" name="groupBox_3">
+         <property name="title">
+          <string>Редактирование</string>
+         </property>
+         <widget class="QGroupBox" name="groupBox_4">
+          <property name="geometry">
+           <rect>
+            <x>20</x>
+            <y>30</y>
+            <width>501</width>
+            <height>85</height>
+           </rect>
+          </property>
+          <property name="title">
+           <string>Добавить состояние</string>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout">
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_5">
+             <item>
+              <widget class="QLabel" name="label_2">
+               <property name="minimumSize">
+                <size>
+                 <width>120</width>
+                 <height>23</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>120</width>
+                 <height>23</height>
+                </size>
+               </property>
+               <property name="text">
+                <string>Введите состояние:</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLineEdit" name="newState">
+               <property name="minimumSize">
+                <size>
+                 <width>272</width>
+                 <height>20</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>272</width>
+                 <height>20</height>
+                </size>
+               </property>
+               <property name="maxLength">
+                <number>5</number>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="addNewState">
+               <property name="minimumSize">
+                <size>
+                 <width>75</width>
+                 <height>23</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>75</width>
+                 <height>23</height>
+                </size>
+               </property>
+               <property name="text">
+                <string>Добавить</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_6">
+             <item>
+              <widget class="QCheckBox" name="beginState">
+               <property name="text">
+                <string>Начальное</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QCheckBox" name="endState">
+               <property name="text">
+                <string>Конечное</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QCheckBox" name="currState">
+               <property name="text">
+                <string>Текущее</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+          </layout>
+         </widget>
+         <widget class="QGroupBox" name="groupBox_5">
+          <property name="geometry">
+           <rect>
+            <x>20</x>
+            <y>120</y>
+            <width>501</width>
+            <height>83</height>
+           </rect>
+          </property>
+          <property name="title">
+           <string>Добавить символ алфавита</string>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_2">
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_8">
+             <item>
+              <widget class="QLabel" name="label_4">
+               <property name="minimumSize">
+                <size>
+                 <width>120</width>
+                 <height>23</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>120</width>
+                 <height>23</height>
+                </size>
+               </property>
+               <property name="text">
+                <string>Введите символ:</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLineEdit" name="newSymbol">
+               <property name="minimumSize">
+                <size>
+                 <width>272</width>
+                 <height>20</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>272</width>
+                 <height>20</height>
+                </size>
+               </property>
+               <property name="maxLength">
+                <number>5</number>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="addNewSymbol">
+               <property name="minimumSize">
+                <size>
+                 <width>75</width>
+                 <height>23</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>75</width>
+                 <height>23</height>
+                </size>
+               </property>
+               <property name="text">
+                <string>Добавить</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="emptySymbol">
+             <property name="text">
+              <string>Пустой символ</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </widget>
        </item>
       </layout>
      </widget>

@@ -32,7 +32,7 @@ public:
 	void	     decrementPointer();
 
 private:
-	friend class Tape;
+	friend class Machine;
 	QStringList  tapeView;
 	unsigned int tapePointer;
 	QString		 emptySymbol;

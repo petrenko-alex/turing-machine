@@ -33,6 +33,8 @@ public:
 	~TuringMachine();
 
 private slots:
+	void addState();
+	void addSymbol();
 	void importTape();
 	void exportTape();
 	void importController();
@@ -57,9 +59,13 @@ private slots:
 	void repaintTape();
 	void setControlButtonsEnabled(bool isEnabled);
 	void rememberCurrentTapeSymbol(QTableWidgetItem* item);
+	void rememberCurrentCommand(QTableWidgetItem* item);
 	void modifyCurrentTapeSymbol(QTableWidgetItem* item);
+	void modifyCurrentCommand(QTableWidgetItem* item);
 
 private:
+	void addRow(QTableWidget* table, const QString& row);
+	void addColumn(QTableWidget* table, const QString& column);
 	void initializeTape();
 	void paintRow(int rowNumber, const QColor& color);
 	void setConnections() const;
@@ -73,6 +79,7 @@ private:
 	int tapeOffet;
 
 	QString currentTapeSymbol;
+	QString currentCommand;
 };
 
 #endif // TURINGMACHINE_H
