@@ -62,7 +62,11 @@ void Tape::setCurrentTapePointer(int index) throw(QString&)
 	}
 	else
 	{
-		tapePointer = index;
+		tapePointer = index;		
+		if (tapeView[tapePointer] == TAPE_BLANK)
+		{
+			tapeView[tapePointer] = emptySymbol;
+		}
 	}
 
 }

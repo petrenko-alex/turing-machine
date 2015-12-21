@@ -4,6 +4,8 @@ TuringMachine::TuringMachine(QWidget *parent)
 	: QMainWindow(parent)
 {
 	ui.setupUi(this);
+	setControlButtonsEnabled(false);
+	ui.stop->setEnabled(false);
 	tapeOffet = TAPE_OFFSET;
 	machine = new Machine;
 	ui.tape->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
@@ -114,7 +116,7 @@ void TuringMachine::machineBeginWork()
 {
 	if (machine->isReady())
 	{
-		qDebug() << "Начата работа машины";
+		ui.stop->setEnabled(true);
 		QtConcurrent::run(this->machine,&Machine::startWork);
 	}
 	else
@@ -125,7 +127,6 @@ void TuringMachine::machineBeginWork()
 
 void TuringMachine::machineStopWork()
 {
-	qDebug() << "Нажата кнопка останова машины";
 	machine->stopWork();
 }
 
@@ -138,7 +139,15 @@ void TuringMachine::machineFinished()
 {
 	// #TODO: Что сделать еще?
 	ui.nextCommand->setText("Машина завершила работу");
+	showCurrentState();
 	QMessageBox::information(this, "Состояние машины", "Машина достигла конечного состояния");
+}
+
+void TuringMachine::machineStopped()
+{
+	ui.stop->setEnabled(false);
+	showCurrentState();
+	showNextCommand();
 }
 
 void TuringMachine::machineTapeSymbolChanged(unsigned int index, QString newSymbol)
@@ -208,7 +217,7 @@ void TuringMachine::expandTape(int currentRow, int currentColumn, int previousRo
 	else if (currentColumn == 0)
 	/* Добавляем ячейку слева */
 	{
-		QTableWidgetItem* item = new QTableWidgetItem("-");
+		QTableWidgetItem* item = new QTableWidgetItem(TAPE_BLANK);
 		item->setTextAlignment(Qt::AlignCenter);
 		ui.tape->insertColumn(0);
 		ui.tape->setColumnCount(columns + 1);
@@ -252,6 +261,7 @@ void TuringMachine::showLoadedTape()
 		if (machine->isControllerLoaded())
 		{
 			showNextCommand();
+			setControlButtonsEnabled(true);
 		}
 	}
 }
@@ -293,6 +303,7 @@ void TuringMachine::showLoadedController()
 			if (machine->isTapeLoaded())
 			{
 				showNextCommand();
+				setControlButtonsEnabled(true);
 			}
 		}
 	}
@@ -310,7 +321,6 @@ void TuringMachine::showCurrentState()
 
 		if (state == currentState)
 		{
-			ui.controller->verticalHeaderItem(i)->setForeground(QColor("green"));
 			paintRow(i, Qt::green);
 		}
 	}
@@ -325,7 +335,16 @@ void TuringMachine::showNextCommand()
 		QString currentSymbol = machine->getCurrentTapeSymbol();
 		QString key = currentSymbol + currentState;
 		QString cmd = machine->getCommand(key);
-		QString text = currentSymbol + "-" + currentState + "->" + cmd;
+		QString text;
+
+		if (cmd.isEmpty())
+		{
+			text = "Команда не задана";
+		}
+		else
+		{
+			text = currentSymbol + "-" + currentState + "->" + cmd;
+		}
 
 		ui.nextCommand->setText(text);
 	}
@@ -333,7 +352,32 @@ void TuringMachine::showNextCommand()
 
 void TuringMachine::repaintTape()
 {
-	
+	ui.tape->clear();
+	QStringList tapeView = machine->getTape();
+	int tapeSize = tapeView.size();
+
+	/* Перерисовываем ленту */
+	ui.tape->setColumnCount(tapeSize);
+	for (int i = 0; i < tapeSize; ++i)
+	{
+		QTableWidgetItem* item = new QTableWidgetItem(tapeView[i]);
+		item->setTextAlignment(Qt::AlignCenter);		
+		ui.tape->setItem(0, i, item);
+	}
+	/* Устанавливаем указатель */
+	unsigned int tapePointer = machine->getTapePointer();
+	ui.tape->item(0,tapePointer)->setBackgroundColor(Qt::green);
+}
+
+void TuringMachine::setControlButtonsEnabled(bool isEnabled)
+{
+	ui.step->setEnabled(isEnabled);
+	ui.begin->setEnabled(isEnabled);
+}
+
+void TuringMachine::modifyTape(int row, int column)
+{
+	qDebug() << "Мы внутри метода modifyTape";
 }
 
 void TuringMachine::initializeTape()
@@ -343,7 +387,7 @@ void TuringMachine::initializeTape()
 
 	for (int i = 0; i < DEFAULT_TAPE_COLUMNS; ++i)
 	{
-		QTableWidgetItem* item = new QTableWidgetItem("-");
+		QTableWidgetItem* item = new QTableWidgetItem(TAPE_BLANK);
 		item->setTextAlignment(Qt::AlignCenter);
 		ui.tape->setItem(0, i, item);
 	}
@@ -364,6 +408,7 @@ void TuringMachine::paintRow(int rowNumber, const QColor& color)
 
 void TuringMachine::setConnections() const
 {
+	connect(ui.tape, SIGNAL(cellActivated(int, int)), this, SLOT(modifyTape(int,int)));
 	connect(ui.step, SIGNAL(clicked(bool)), SLOT(machineStep ()));
 	connect(ui.stop, SIGNAL(clicked(bool)), SLOT(machineStopWork()));
 	connect(ui.exportTape, SIGNAL(clicked(bool)), SLOT(exportTape()));
@@ -376,6 +421,8 @@ void TuringMachine::setConnections() const
 	connect(machine, SIGNAL(machineFinished()), this, SLOT(machineFinished()));
 	connect(machine, SIGNAL(tapeSymbolChanged(unsigned int, QString)), this, SLOT(machineTapeSymbolChanged(unsigned int,QString)));
 	connect(machine, SIGNAL(tapePointerChanged(unsigned int, unsigned int)), this, SLOT(machineTapePointerChanged(unsigned int, unsigned int)));
+	connect(machine, SIGNAL(tapeChanged()), this, SLOT(repaintTape()));
+	connect(machine, SIGNAL(machineStopped()), this, SLOT(machineStopped()));
 }
 
 void TuringMachine::parseControllerFile(const QString& data) throw(QString&)

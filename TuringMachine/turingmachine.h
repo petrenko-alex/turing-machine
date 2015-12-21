@@ -42,6 +42,7 @@ private slots:
 	void machineStopWork();
 	void machineErrorReceived(QString &errorString);
 	void machineFinished();
+	void machineStopped();
 	void machineTapeSymbolChanged(unsigned int index, QString newSymbol);
 	void machineTapePointerChanged(unsigned int oldTapePointer, unsigned int newTapePointer);
 
@@ -54,6 +55,8 @@ private slots:
 	void showCurrentState();
 	void showNextCommand();
 	void repaintTape();
+	void setControlButtonsEnabled(bool isEnabled);
+	void modifyTape(int row,int column);
 
 private:
 	void initializeTape();

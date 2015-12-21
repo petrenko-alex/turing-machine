@@ -3,6 +3,8 @@
 
 #include <QObject>
 
+#define TAPE_BLANK	"-"
+
 class Tape : public QObject
 {
 	Q_OBJECT

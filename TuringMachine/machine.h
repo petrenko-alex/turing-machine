@@ -5,6 +5,7 @@
 #include "controller.h"
 #include "tape.h"
 
+#define TAPE_BLANK	"-"
 
 class Machine : public QObject
 {
@@ -13,6 +14,8 @@ class Machine : public QObject
 signals:
 	void machineError(QString&);
 	void machineFinished();
+	void machineStopped();
+	void tapeChanged();
 	void tapeSymbolChanged(unsigned int index, QString newSymbol);
 	void tapePointerChanged(unsigned int oldPos, unsigned int newPos);
 

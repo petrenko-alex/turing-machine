@@ -219,11 +219,13 @@ void Machine::startWork()
 	{
 		oneStep(false);
 	}
+	emit tapeChanged();
 }
 
 void Machine::stopWork()
 {
 	machineState = MachineState::FINISHED;
+	emit machineStopped();
 }
 
 void Machine::verifyTape()
@@ -234,7 +236,7 @@ void Machine::verifyTape()
 
 	for (auto i : tapeView)
 	{
-		if (i != "-" && !controller->isAlphabetSymbolValid(i))
+		if (i != TAPE_BLANK && !controller->isAlphabetSymbolValid(i))
 		{
 			isOk = false;
 			break;
