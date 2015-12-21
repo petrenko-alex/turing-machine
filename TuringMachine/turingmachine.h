@@ -3,6 +3,7 @@
 
 #include <QtWidgets/QMainWindow>
 #include <QFileDialog>
+#include <QList>
 #include <QDebug>
 #include <QIODevice>
 #include <QJsonDocument>

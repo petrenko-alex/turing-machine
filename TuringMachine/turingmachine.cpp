@@ -180,10 +180,15 @@ void TuringMachine::expandTape(int currentRow, int currentColumn, int previousRo
 	if (currentColumn == (columns - 1))
 	/* Добавляем ячейку справа */
 	{
-		QTableWidgetItem* item = new QTableWidgetItem("-");
+		QTableWidgetItem* item = new QTableWidgetItem(TAPE_BLANK);
 		item->setTextAlignment(Qt::AlignCenter);
 		ui.tape->setColumnCount(columns + 1);
 		ui.tape->setItem(0, columns, item);
+
+		if (machine->isTapeLoaded())
+		{
+			machine->appendToTape(TAPE_BLANK);
+		}
 	}
 	else if (currentColumn == 0)
 	/* Добавляем ячейку слева */
@@ -194,6 +199,11 @@ void TuringMachine::expandTape(int currentRow, int currentColumn, int previousRo
 		ui.tape->setColumnCount(columns + 1);
 		ui.tape->setItem(0, 0, item);
 		++tapeOffet;
+
+		if (machine->isTapeLoaded())
+		{
+			machine->prependToTape(TAPE_BLANK);
+		}
 	}
 }
 
@@ -201,14 +211,24 @@ void TuringMachine::showLoadedTape()
 {
 	QStringList tape = machine->getTape ();
 	int size = tape.size();
+	ui.tape->setColumnCount(size);
 
 	if (machine->isTapeLoaded() && size != 0)
 	{
 		for (int i = 0; i < size; ++i)
 		{
-			ui.tape->item(0, (tapeOffet + i))->setText(tape[i]);
+			QTableWidgetItem* item = ui.tape->item(0, i);
+			if (item != nullptr)
+			{
+				item->setText(tape[i]);
+			}
+			else
+			{
+				item = new QTableWidgetItem(tape[i]);
+				ui.tape->setItem(0, i, item);
+			}
 		}
-		ui.tape->item(0, (tapeOffet + machine->getTapePointer()))->setBackgroundColor(Qt::green);
+		ui.tape->item(0, machine->getTapePointer())->setBackgroundColor(Qt::green);
 
 		if (machine->isControllerLoaded())
 		{
@@ -464,8 +484,11 @@ void TuringMachine::parseCommands(const QJsonObject commands) throw(QString&)
 std::tuple<QStringList, unsigned int,QString> TuringMachine::parseTapeFile(const QString& data) const throw(QString&)
 {
 	QString string;
-	QStringList list;
 	unsigned int number;
+	QVector<QString> tmp;
+	
+	tmp.fill(TAPE_BLANK, ui.tape->columnCount());
+	QStringList list(QList<QString>::fromVector (tmp));
 
 	QJsonDocument doc = QJsonDocument::fromJson(data.toUtf8());
 	QJsonObject obj = doc.object();
@@ -473,11 +496,21 @@ std::tuple<QStringList, unsigned int,QString> TuringMachine::parseTapeFile(const
 	if (obj.contains("tape-view"))
 	{
 		QJsonArray arr = obj["tape-view"].toArray();
+		int size = arr.size();
 
-		for (auto i : arr)
+		for (int i = 0; i < size;++i)
 		{
-			QString tmp = i.toString();
-			list << tmp;
+			QString tmp = arr[i].toString();
+			int insertIndex = TAPE_OFFSET + i;
+
+			if (list.size() < insertIndex)
+			{
+				list.insert((TAPE_OFFSET + i),tmp);
+			}
+			else
+			{
+				list[insertIndex] = tmp;
+			}
 		}
 	}
 	else
@@ -488,7 +521,7 @@ std::tuple<QStringList, unsigned int,QString> TuringMachine::parseTapeFile(const
 
 	if (obj.contains("pointer-index"))
 	{
-		number = obj["pointer-index"].toInt();
+		number = obj["pointer-index"].toInt() + TAPE_OFFSET;
 
 		if (number < 0 || number >= list.size())
 		{
