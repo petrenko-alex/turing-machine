@@ -174,6 +174,7 @@ void TuringMachine::importController()
 			{
 				QMessageBox::critical(this, "Ошибка разбора файла \"" + fileName + "\"", errorString);
 				file.close();
+				ui.controller->blockSignals(false);
 				return;
 			}
 			file.close();
@@ -374,7 +375,7 @@ void TuringMachine::showLoadedTape()
 
 void TuringMachine::showLoadedController()
 {
-	ui.tape->blockSignals(true);
+	ui.controller->blockSignals(true);
 	QStringList alphabet = machine->getAlphabet();
 	QStringList states = machine->getStates(false);
 	int columns = alphabet.size();
@@ -406,6 +407,7 @@ void TuringMachine::showLoadedController()
 			}
 
 			showCurrentState();
+			ui.controller->blockSignals(true);
 
 			if (machine->isTapeLoaded())
 			{
@@ -414,7 +416,7 @@ void TuringMachine::showLoadedController()
 			}
 		}
 	}
-	ui.tape->blockSignals(false);
+	ui.controller->blockSignals(false);
 }
 
 void TuringMachine::showCurrentState()
