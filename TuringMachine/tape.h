@@ -24,6 +24,8 @@ public:
 	void		 setCurrentSymbol(const QString& symbol);
 	void		 setSymbolAt(const QString& symbol, unsigned int index);
 	void		 setCurrentTapePointer(int index) throw(QString&);
+	void		 appendToTape(const QString &symbol);
+	void		 prependToTape(const QString &symbol);
 
 private:
 	friend class Tape;

@@ -40,6 +40,16 @@ void Machine::addComand(const QString& key, const Command& cmd) throw(QString&)
 	controller->addComand(key, cmd);
 }
 
+void Machine::appendToTape(const QString& symbol)
+{
+	tape->appendToTape(symbol);
+}
+
+void Machine::prependToTape(const QString& symbol)
+{
+	tape->prependToTape(symbol);
+}
+
 QStringList Machine::getStates(bool includeStopState) const
 {
 	return controller->getStates(includeStopState);

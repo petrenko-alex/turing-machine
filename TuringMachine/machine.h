@@ -30,6 +30,8 @@ public:
 	void setBeginEndStates(const QString& beginState,
 						   const QString& endState) throw(QString&);
 	void addComand(const QString& key, const Command& cmd) throw(QString&);
+	void appendToTape(const QString& symbol);
+	void prependToTape(const QString& symbol);
 
 	/* Гет-методы */
 	QStringList  getTape() const;

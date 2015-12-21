@@ -67,6 +67,16 @@ void Tape::setCurrentTapePointer(int index) throw(QString&)
 
 }
 
+void Tape::appendToTape(const QString &symbol)
+{
+	tapeView.append(symbol);
+}
+
+void Tape::prependToTape(const QString &symbol)
+{
+	tapeView.prepend(symbol);
+}
+
 void Tape::setData(const QStringList &tapeView, unsigned int tapePointer, const QString& emptySymbol)
 {
 	this->tapeView	  = tapeView;
