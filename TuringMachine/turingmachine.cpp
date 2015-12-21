@@ -112,7 +112,6 @@ void TuringMachine::importTape()
 													 "Выберите файл ленты", 
 													 "./", 
 													 "JSON файлы(*.json)");
-	//QString fileName = DEFAULT_TAPE_FILE;
 
 	if (!fileName.isEmpty())
 	{
@@ -172,7 +171,6 @@ void TuringMachine::importController()
 														"Выберите файл ленты",
 														"./",
 														"JSON файлы(*.json)");
-	//QString fileName = DEFAULT_CONTROLLER_FILE;
 
 	if (!fileName.isEmpty())
 	{
@@ -189,6 +187,7 @@ void TuringMachine::importController()
 			{
 				QMessageBox::critical(this, "Ошибка разбора файла \"" + fileName + "\"", errorString);
 				file.close();
+				machine->resetController();
 				ui.controller->blockSignals(false);
 				return;
 			}
@@ -264,8 +263,9 @@ void TuringMachine::machineErrorReceived(QString &errorString)
 
 void TuringMachine::machineFinished()
 {
-	// #TODO: Что сделать еще?
 	ui.nextCommand->setText("Машина завершила работу");
+	setControlButtonsEnabled(false);
+	ui.stop->setEnabled(false);
 	showCurrentState();
 	QMessageBox::information(this, "Состояние машины", "Машина достигла конечного состояния");
 	ui.tape->blockSignals(false);
@@ -548,6 +548,7 @@ void TuringMachine::modifyCurrentTapeSymbol(QTableWidgetItem* item)
 			list[itemIndex] = itemText;
 			machine->setTape(list, itemIndex);
 			ui.tape->item(0, machine->getTapePointer())->setBackgroundColor(Qt::green);
+			machine->setEmptySymbol(itemText);
 			machine->setTapeLoaded();
 			ui.exportTape->setEnabled(true);
 		}
@@ -759,6 +760,7 @@ void TuringMachine::setConnections() const
 	connect(machine, SIGNAL(tapePointerChanged(unsigned int, unsigned int)), this, SLOT(machineTapePointerChanged(unsigned int, unsigned int)));
 	connect(machine, SIGNAL(tapeChanged()), this, SLOT(repaintTape()));
 	connect(machine, SIGNAL(machineStopped()), this, SLOT(machineStopped()));
+	qDebug() << connect(machine, SIGNAL(machineReady(bool)), this, SLOT(setControlButtonsEnabled(bool)));
 	connect(ui.addNewState, SIGNAL(clicked(bool)), SLOT(addState()));
 	connect(ui.addNewSymbol, SIGNAL(clicked(bool)), SLOT(addSymbol()));
 	connect(ui.controller, SIGNAL(itemPressed(QTableWidgetItem*)), this, SLOT(rememberCurrentCommand(QTableWidgetItem*)));

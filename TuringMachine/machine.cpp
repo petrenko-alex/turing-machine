@@ -47,12 +47,26 @@ void Machine::setAlphabet(const QStringList& alphabet)
 
 void Machine::setBeginEndStates(const QString& beginState, const QString& endState) throw(QString&)
 {
-	controller->setBeginEndStates(beginState, endState);
+	try
+	{
+		controller->setBeginEndStates(beginState, endState);
+	}
+	catch (QString& errorString)
+	{
+		emit machineError(errorString);
+	}
 }
 
 void Machine::addComand(const QString& key, const Command& cmd) throw(QString&)
 {
-	controller->addComand(key, cmd);
+	try
+	{
+		controller->addComand(key, cmd);
+	}
+	catch (QString& errorString)
+	{
+		emit machineError(errorString);
+	}
 }
 
 void Machine::addState(const QString& state)
@@ -122,7 +136,6 @@ unsigned int Machine::getTapePointer() const
 
 QString Machine::getCommand(const QString& key) const
 {
-	// #TODO: не обращаться напрямую к полю
 	QString command = "";
 
 	if (controller->commands.contains(key))
@@ -231,6 +244,18 @@ void Machine::reset()
 	controllerLoaded = false;
 }
 
+void Machine::resetController()
+{
+	controller->reset();
+	controllerLoaded = false;
+}
+
+void Machine::resetTape()
+{
+	tape->reset();
+	tapeLoaded = false;
+}
+
 void Machine::oneStep(bool emitSignals)
 {
 	/* Получаем команду по символу ленты и текущему состоянию */
@@ -285,7 +310,6 @@ void Machine::oneStep(bool emitSignals)
 	setCurrentState(newState);
 
 	/* Проверка конечного состояния */
-	// #TODO: Не обращаться к полям напрямую
 	if (controller->currentState == controller->endState)
 	{
 		machineState = MachineState::FINISHED;
@@ -331,7 +355,12 @@ void Machine::verifyTape()
 	if (!isOk)
 	{
 		QString message = "Лента машины не соответствует алфавиту управляющего устройства.";
+		tapeLoaded = false;
 		emit machineError(message);
+	}
+	else
+	{
+		emit machineReady(true);
 	}
 }
 

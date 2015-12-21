@@ -74,8 +74,13 @@ void Controller::addComand(const QString& key, const Command& cmd) throw(QString
 		QString errorString = "Cостояние задано не верно.\nОтсутствует в множестве состояний";
 		throw errorString;
 	}
-
-	// #TODO: Проверка поля action
+	
+	if (cmd.action != "R" && cmd.action != "L" && cmd.action != "N")
+	{
+		QString errorString = "Действие задано не верно.\nВозможные действия:\"R\",\"L\",\"N\".";
+		throw errorString;
+	}
+	
 	commands.insert (key,cmd);
 }
 
@@ -97,6 +102,7 @@ void Controller::reset()
 	states.clear();
 	beginState.clear();
 	endState.clear();
+	currentState.clear();
 	commands.clear();
 }
 

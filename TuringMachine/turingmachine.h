@@ -22,8 +22,6 @@
 #define TAPE_OFFSET				10
 #define TAPE_BLANK				"-"
 
-// #TODO: Вынести функции парсинга файлов json в отдельный класс.
-
 class TuringMachine : public QMainWindow
 {
 	Q_OBJECT
