@@ -59,10 +59,6 @@ public:
     QHBoxLayout *horizontalLayout_2;
     QLabel *label;
     QLabel *currentState;
-    QHBoxLayout *horizontalLayout_4;
-    QPushButton *exportController;
-    QPushButton *importController;
-    QSpacerItem *horizontalSpacer_2;
     QGroupBox *groupBox_3;
     QGroupBox *groupBox_4;
     QVBoxLayout *verticalLayout;
@@ -81,6 +77,11 @@ public:
     QLineEdit *newSymbol;
     QPushButton *addNewSymbol;
     QCheckBox *emptySymbol;
+    QHBoxLayout *horizontalLayout_4;
+    QPushButton *exportController;
+    QPushButton *importController;
+    QPushButton *resetButton;
+    QSpacerItem *horizontalSpacer_2;
     QMenuBar *menuBar;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
@@ -259,30 +260,6 @@ public:
 
         gridLayout->addWidget(frame, 1, 2, 1, 1);
 
-        horizontalLayout_4 = new QHBoxLayout();
-        horizontalLayout_4->setSpacing(6);
-        horizontalLayout_4->setObjectName(QStringLiteral("horizontalLayout_4"));
-        exportController = new QPushButton(groupBox_2);
-        exportController->setObjectName(QStringLiteral("exportController"));
-        exportController->setMinimumSize(QSize(75, 23));
-        exportController->setMaximumSize(QSize(75, 23));
-
-        horizontalLayout_4->addWidget(exportController);
-
-        importController = new QPushButton(groupBox_2);
-        importController->setObjectName(QStringLiteral("importController"));
-        importController->setMinimumSize(QSize(75, 23));
-        importController->setMaximumSize(QSize(75, 23));
-
-        horizontalLayout_4->addWidget(importController);
-
-
-        gridLayout->addLayout(horizontalLayout_4, 3, 0, 1, 1);
-
-        horizontalSpacer_2 = new QSpacerItem(398, 20, QSizePolicy::Fixed, QSizePolicy::Minimum);
-
-        gridLayout->addItem(horizontalSpacer_2, 3, 1, 1, 1);
-
         groupBox_3 = new QGroupBox(groupBox_2);
         groupBox_3->setObjectName(QStringLiteral("groupBox_3"));
         groupBox_4 = new QGroupBox(groupBox_3);
@@ -384,6 +361,38 @@ public:
 
         gridLayout->addWidget(groupBox_3, 2, 2, 1, 1);
 
+        horizontalLayout_4 = new QHBoxLayout();
+        horizontalLayout_4->setSpacing(6);
+        horizontalLayout_4->setObjectName(QStringLiteral("horizontalLayout_4"));
+        exportController = new QPushButton(groupBox_2);
+        exportController->setObjectName(QStringLiteral("exportController"));
+        exportController->setEnabled(false);
+        exportController->setMinimumSize(QSize(75, 23));
+        exportController->setMaximumSize(QSize(75, 23));
+
+        horizontalLayout_4->addWidget(exportController);
+
+        importController = new QPushButton(groupBox_2);
+        importController->setObjectName(QStringLiteral("importController"));
+        importController->setMinimumSize(QSize(75, 23));
+        importController->setMaximumSize(QSize(75, 23));
+
+        horizontalLayout_4->addWidget(importController);
+
+        resetButton = new QPushButton(groupBox_2);
+        resetButton->setObjectName(QStringLiteral("resetButton"));
+        resetButton->setMinimumSize(QSize(90, 23));
+        resetButton->setMaximumSize(QSize(90, 23));
+
+        horizontalLayout_4->addWidget(resetButton);
+
+
+        gridLayout->addLayout(horizontalLayout_4, 3, 0, 1, 1);
+
+        horizontalSpacer_2 = new QSpacerItem(288, 17, QSizePolicy::Fixed, QSizePolicy::Minimum);
+
+        gridLayout->addItem(horizontalSpacer_2, 3, 1, 1, 1);
+
 
         gridLayout_3->addWidget(groupBox_2, 1, 0, 1, 1);
 
@@ -426,8 +435,6 @@ public:
         nextCommand->setText(QApplication::translate("TuringMachineClass", "-", 0));
         label->setText(QApplication::translate("TuringMachineClass", "\320\242\320\265\320\272\321\203\321\211\320\265\320\265 \321\201\320\276\321\201\321\202\320\276\321\217\320\275\320\270\320\265:", 0));
         currentState->setText(QApplication::translate("TuringMachineClass", "-", 0));
-        exportController->setText(QApplication::translate("TuringMachineClass", "\320\255\320\272\321\201\320\277\320\276\321\200\321\202", 0));
-        importController->setText(QApplication::translate("TuringMachineClass", "\320\230\320\274\320\277\320\276\321\200\321\202", 0));
         groupBox_3->setTitle(QApplication::translate("TuringMachineClass", "\320\240\320\265\320\264\320\260\320\272\321\202\320\270\321\200\320\276\320\262\320\260\320\275\320\270\320\265", 0));
         groupBox_4->setTitle(QApplication::translate("TuringMachineClass", "\320\224\320\276\320\261\320\260\320\262\320\270\321\202\321\214 \321\201\320\276\321\201\321\202\320\276\321\217\320\275\320\270\320\265", 0));
         label_2->setText(QApplication::translate("TuringMachineClass", "\320\222\320\262\320\265\320\264\320\270\321\202\320\265 \321\201\320\276\321\201\321\202\320\276\321\217\320\275\320\270\320\265:", 0));
@@ -439,6 +446,9 @@ public:
         label_4->setText(QApplication::translate("TuringMachineClass", "\320\222\320\262\320\265\320\264\320\270\321\202\320\265 \321\201\320\270\320\274\320\262\320\276\320\273:", 0));
         addNewSymbol->setText(QApplication::translate("TuringMachineClass", "\320\224\320\276\320\261\320\260\320\262\320\270\321\202\321\214", 0));
         emptySymbol->setText(QApplication::translate("TuringMachineClass", "\320\237\321\203\321\201\321\202\320\276\320\271 \321\201\320\270\320\274\320\262\320\276\320\273", 0));
+        exportController->setText(QApplication::translate("TuringMachineClass", "\320\255\320\272\321\201\320\277\320\276\321\200\321\202", 0));
+        importController->setText(QApplication::translate("TuringMachineClass", "\320\230\320\274\320\277\320\276\321\200\321\202", 0));
+        resetButton->setText(QApplication::translate("TuringMachineClass", "\320\237\320\265\321\200\320\265\320\267\320\260\320\263\321\200\321\203\320\267\320\270\321\202\321\214", 0));
     } // retranslateUi
 
 };

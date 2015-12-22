@@ -31,6 +31,7 @@ public:
 	~TuringMachine();
 
 private slots:
+	void resetMachine();
 	void addState();
 	void addSymbol();
 	void importTape();

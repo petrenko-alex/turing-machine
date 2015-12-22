@@ -72,11 +72,21 @@ void Machine::addComand(const QString& key, const Command& cmd) throw(QString&)
 void Machine::addState(const QString& state)
 {
 	controller->states.append(state);
+
+	if (!controller->alphabet.isEmpty())
+	{
+		setControllerLoaded();
+	}
 }
 
 void Machine::addSymbol(const QString& symbol)
 {
 	controller->alphabet.append(symbol);
+
+	if (!controller->states.isEmpty())
+	{
+		setControllerLoaded();
+	}
 }
 
 void Machine::appendToTape(const QString& symbol)

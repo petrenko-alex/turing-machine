@@ -20,6 +20,41 @@ TuringMachine::~TuringMachine()
 	delete machine;
 }
 
+void TuringMachine::resetMachine()
+{
+	ui.tape->blockSignals(true);
+	ui.controller->blockSignals(true);
+	machine->reset();
+
+	setControlButtonsEnabled(false);
+	ui.stop->setEnabled(false);
+	ui.exportTape->setEnabled(false);
+	ui.exportController->setEnabled(false);
+
+	ui.newState->clear();
+	ui.newSymbol->clear();
+
+	ui.beginState->setChecked(false);
+	ui.endState->setChecked(false);
+	ui.currState->setChecked(false);
+	ui.emptySymbol->setChecked(false);
+
+	ui.nextCommand->setText(TAPE_BLANK);
+	ui.currentState->setText(TAPE_BLANK);
+
+	ui.tape->clear();
+	ui.tape->setColumnCount(0);
+	ui.tape->setRowCount(0);
+
+	ui.controller->clear();
+	ui.controller->setColumnCount(0);
+	ui.controller->setRowCount(0);
+
+	initializeTape();
+	ui.tape->blockSignals(false);
+	ui.controller->blockSignals(false);
+}
+
 void TuringMachine::addState()
 {
 	ui.controller->blockSignals(true);
@@ -51,6 +86,7 @@ void TuringMachine::addState()
 			}
 
 			addRow(ui.controller, newState);
+			ui.exportController->setEnabled(true);
 		}
 		else
 		{
@@ -88,6 +124,7 @@ void TuringMachine::addSymbol()
 			
 			addColumn(ui.controller, newSymbol);
 			showCurrentState();
+			ui.exportController->setEnabled(true);
 		}
 		else
 		{
@@ -193,6 +230,7 @@ void TuringMachine::importController()
 			}
 			file.close();
 			machine->setControllerLoaded();
+			ui.exportController->setEnabled(true);
 			showLoadedController();
 		}
 	}
@@ -744,6 +782,7 @@ void TuringMachine::paintRow(int rowNumber, const QColor& color)
 
 void TuringMachine::setConnections() const
 {
+	connect(ui.resetButton, SIGNAL(clicked(bool)), SLOT(resetMachine()));
 	connect(ui.step, SIGNAL(clicked(bool)), SLOT(machineStep ()));
 	connect(ui.stop, SIGNAL(clicked(bool)), SLOT(machineStopWork()));
 	connect(ui.exportTape, SIGNAL(clicked(bool)), SLOT(exportTape()));
@@ -760,11 +799,12 @@ void TuringMachine::setConnections() const
 	connect(machine, SIGNAL(tapePointerChanged(unsigned int, unsigned int)), this, SLOT(machineTapePointerChanged(unsigned int, unsigned int)));
 	connect(machine, SIGNAL(tapeChanged()), this, SLOT(repaintTape()));
 	connect(machine, SIGNAL(machineStopped()), this, SLOT(machineStopped()));
-	qDebug() << connect(machine, SIGNAL(machineReady(bool)), this, SLOT(setControlButtonsEnabled(bool)));
+	connect(machine, SIGNAL(machineReady(bool)), this, SLOT(setControlButtonsEnabled(bool)));
 	connect(ui.addNewState, SIGNAL(clicked(bool)), SLOT(addState()));
 	connect(ui.addNewSymbol, SIGNAL(clicked(bool)), SLOT(addSymbol()));
 	connect(ui.controller, SIGNAL(itemPressed(QTableWidgetItem*)), this, SLOT(rememberCurrentCommand(QTableWidgetItem*)));
 	connect(ui.controller, SIGNAL(itemChanged(QTableWidgetItem*)), this, SLOT(modifyCurrentCommand(QTableWidgetItem*)));
+
 }
 
 void TuringMachine::parseControllerFile(const QString& data) throw(QString&)

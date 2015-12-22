@@ -75,6 +75,8 @@ public:
 
 	/* Перезагрузка машины */
 	void reset();
+	void resetController();
+	void resetTape();
 
 	/* Работа машины */
 	void oneStep(bool emitSignals);
