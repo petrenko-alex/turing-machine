@@ -974,7 +974,7 @@ std::tuple<QStringList, unsigned int,QString> TuringMachine::parseTapeFile(const
 
 	if (obj.contains("pointer-index"))
 	{
-		number = obj["pointer-index"].toInt() + TAPE_OFFSET;
+		number = (obj["pointer-index"]).toInt() + TAPE_OFFSET;
 
 		if (number < 0 || number >= list.size())
 		{

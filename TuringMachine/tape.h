@@ -2,6 +2,7 @@
 #define TAPE_H
 
 #include <QObject>
+#include <QStringList>
 
 #define TAPE_BLANK	"-"
 
